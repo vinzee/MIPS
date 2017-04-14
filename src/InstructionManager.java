@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -41,12 +40,12 @@ public class InstructionManager {
 			label = l[0];			
 			line = l[1];
 		}
-		String[] tokens = line.split("[\\s]", 2);
-		String opcode = tokens[0].trim(); // .toUpperCase();
-		
-		String[] operands = Arrays.copyOfRange(tokens, 1, tokens.length);
-
-//		System.out.println("--- " + label + " : " + opcode + " " + Arrays.asList(operands));
+		String[] tokens = line.trim().split("[\\s]", 2);
+		String opcode = tokens[0].trim().toUpperCase();		
+		String[] operands = null;
+		if(tokens.length > 1){
+			operands = tokens[1].replaceAll(",", "").split(" ");				
+		}
 		
 		Instruction inst = new Instruction(label, opcode, operands, "my_type");
 		instructions.put(count, inst);
