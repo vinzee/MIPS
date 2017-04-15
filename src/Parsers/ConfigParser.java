@@ -1,24 +1,20 @@
+package Parsers;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 
-public class ConfigManager {
-	static HashMap<String, Integer> latencies = new HashMap<String, Integer>();
-	static HashMap<String, Integer> no_of_function_units = new HashMap<String, Integer>();
-	
+import FunctionalUnits.*;
+import Managers.FunctionalUnitManager;
+
+public class ConfigParser {
 	public static void parse(String filepath) throws Exception {
 		try (BufferedReader br = new BufferedReader(new FileReader(filepath))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				// process the line.
 				line = line.trim().toLowerCase();
-				System.out.println(line);
 				parseLine(line);
-			}
-			
-			debug();
+			}			
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -30,14 +26,27 @@ public class ConfigManager {
 	
 	private static void parseLine(String line) throws Exception {
 		String[] l = line.split(":");
+		String[] m = l[1].split(",");
+		int no = Integer.parseInt(m[0].trim());
 
 		switch(l[0]){
 			case "fp adder":
+				for(int i=0;i<no;i++){
+					FpAdderUnit unit = new FpAdderUnit(Integer.parseInt(m[1].trim()));
+					FunctionalUnitManager.fp_adder_unit_pool.add(unit);
+				}
+				break;
 			case "fp multiplier":
+				for(int i=0;i<no;i++){
+					FpMultiplierUnit unit = new FpMultiplierUnit(Integer.parseInt(m[1].trim()));
+					FunctionalUnitManager.fp_multiplier_unit_pool.add(unit);
+				}
+				break;
 			case "fp divider":
-				String[] m = l[1].split(",");
-				no_of_function_units.put(l[0], Integer.parseInt(m[0].trim()));
-				latencies.put(l[0], Integer.parseInt(m[1].trim()));						
+				for(int i=0;i<no;i++){
+					FpDividerUnit unit = new FpDividerUnit(Integer.parseInt(m[1].trim()));
+					FunctionalUnitManager.fp_divider_unit_pool.add(unit);
+				}
 				break;
 			case "i-cache":
 				// TODO
@@ -46,10 +55,5 @@ public class ConfigManager {
 				throw new Exception("Unhandled config type - " + l[0]);
 		}
 		
-	}
-
-	public static void debug(){
-		System.out.println("Latencies - " + latencies);
-		System.out.println("FU - " + no_of_function_units);
 	}
 }
