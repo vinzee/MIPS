@@ -6,18 +6,18 @@ package Instructions;
 // Special purpose - HLT (to stop fetching new instructions)
 
 public class Instruction {
-	protected String[] operands = {};
+//	protected String[] operands = {};
 	
-	public String[] getOperands() {
-		return operands;
-	}
+//	public String[] getOperands() {
+//		return operands;
+//	}
 	
-	public String parseOpcode() {
-		return "";
-	}
+//	public String parseOpcode() {
+//		return "";
+//	}
 	
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + ":" + String.join(",", operands);
+		return this.getClass().getSimpleName(); // + ":" + String.join(",", operands);
 	}
 }

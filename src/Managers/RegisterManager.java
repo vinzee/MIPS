@@ -1,50 +1,28 @@
 package Managers;
 import java.util.Arrays;
 
+import Instructions.Operands.RegisterOperand;
+
 public class RegisterManager {
 	static double[] integer_registers = new double[32];
 	static double[] floating_point_registers = new double[32];
 
 	static String[] integer_register_status = new String[32];
 	static String[] floating_point_register_status = new String[32];
-
-//	Pattern int_register_pattern = Pattern.compile();
-//	Pattern fp_register_pattern = Pattern.compile("f\\d+");
-	private static int getIndex(String key) throws Exception {	
-		return Integer.parseInt(key.substring(1,key.length()));
-	}
-
-	public static void validateKey(String key) throws Exception {
-		if(key.matches("[f|r]\\d+")){
-			int index = getIndex(key);
-
-			if(!(0 <= index && index < 32))
-				throw new Error("Invalid Register key - " + key);				
+	
+	public static double read(RegisterOperand register_operand) throws Exception {
+		if(register_operand.floating_point){
+			return floating_point_registers[register_operand.index-1];
 		}else{
-			throw new Error("Invalid Register key - " + key);
+			return integer_registers[register_operand.index-1];
 		}
 	}
-	
-	public static double read(String key) throws Exception {
-		validateKey(key);
-		int index = getIndex(key);
-		
-		if(key.charAt(0) == 'r'){
-			return integer_registers[index-1];
-		}else{ // assume its a f type
-			return floating_point_registers[index-1];
-		}
-	}
-	
 
-	public static double write(String key, Double value) throws Exception {
-		validateKey(key);		
-		int index = getIndex(key);
-		
-		if(key.charAt(0) == 'r'){
-			return integer_registers[index-1] = value;
+	public static double write(RegisterOperand register_operand, Double value) throws Exception {
+		if(register_operand.floating_point){
+			return floating_point_registers[register_operand.index-1] = value;
 		}else{ // assume its a f type
-			return floating_point_registers[index-1] = value;
+			return integer_registers[register_operand.index-1] = value;
 		}
 	}
 	

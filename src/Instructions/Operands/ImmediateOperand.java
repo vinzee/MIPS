@@ -1,7 +1,7 @@
 package Instructions.Operands;
 
 public class ImmediateOperand extends Operand{
-	int value;
+	public int value;
 	
 	public ImmediateOperand(String raw_value) {
 		super();

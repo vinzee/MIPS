@@ -1,9 +1,14 @@
 package Instructions;
 
-class LUI extends Instruction implements Instructable{
+import Instructions.Operands.*;
 
-	public LUI(String[] operands) {
-		this.operands = operands;
+public class LUI extends Instruction implements Instructable{
+	RegisterOperand register_operand;
+	ImmediateOperand immediate_operand;
+	
+	public LUI(RegisterOperand ro, ImmediateOperand io) {
+		this.register_operand = ro;
+		this.immediate_operand = io;
 	}
 
 	@Override

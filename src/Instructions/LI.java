@@ -1,13 +1,14 @@
 package Instructions;
 
-import Instructions.Operands.Operand;
+import Instructions.Operands.*;
 
 public class LI extends Instruction implements Instructable{
-	Operand operand1;
-	Operand operand2;
+	RegisterOperand register_operand;
+	ImmediateOperand immediate_operand;
 	
-	public LI(String[] operands) {
-		this.operands = operands;
+	public LI(RegisterOperand ro, ImmediateOperand io) {
+		this.register_operand = ro;
+		this.immediate_operand = io;
 	}
 
 	@Override
