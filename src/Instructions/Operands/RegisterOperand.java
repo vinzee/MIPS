@@ -1,5 +1,7 @@
 package Instructions.Operands;
 
+import Managers.RegisterManager;
+
 public class RegisterOperand extends Operand {
 	public boolean floating_point;
 	public int index;
@@ -13,6 +15,13 @@ public class RegisterOperand extends Operand {
 		}else{
 			throw new Error("Invalid Register name - " + register_name);
 		}
+	}
+
+	public double getValue() throws Exception {	
+		return RegisterManager.read(this);
+	}
+	public double setValue(double value) throws Exception {	
+		return RegisterManager.write(this, value);
 	}
 	
 	private static int getIndex(String register_name) throws Exception {	

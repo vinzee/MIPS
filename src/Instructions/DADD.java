@@ -1,6 +1,7 @@
 package Instructions;
 
 import Instructions.Operands.RegisterOperand;
+import Managers.RegisterManager;
 
 public class DADD extends Instruction implements Instructable{
 	RegisterOperand register_operand1;
@@ -15,9 +16,9 @@ public class DADD extends Instruction implements Instructable{
 	}
 	
 	@Override
-	public void execute() {
-		// TODO Auto-generated method stub
-		
+	public void execute() throws Exception {
+		double value = RegisterManager.read(this.register_operand2) + RegisterManager.read(this.register_operand3);
+		RegisterManager.write(this.register_operand1, value);
 	}
 
 }

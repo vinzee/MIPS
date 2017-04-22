@@ -4,6 +4,10 @@ import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
 
+// Execution — operate on operands (EX)
+// Actions: The functional unit begins execution upon receiving operands.
+//          When the result is ready, it notifies the scoreboard that it has completed execution.
+
 public class ExecuteStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;		

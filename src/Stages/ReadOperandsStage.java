@@ -4,6 +4,9 @@ import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
 
+// Read operands — wait until no data hazards, then read operands
+// Wait conditions: all source operands are available
+// Actions: the function unit reads register operands and start execution the next cycle
 
 public class ReadOperandsStage {
 	public static int prev_inst_index = -1;

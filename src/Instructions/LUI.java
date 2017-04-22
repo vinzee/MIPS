@@ -2,7 +2,7 @@ package Instructions;
 
 import Instructions.Operands.*;
 
-public class LUI extends Instruction implements Instructable{
+public class LUI extends Instruction implements Instructable, Memorable{
 	RegisterOperand register_operand;
 	ImmediateOperand immediate_operand;
 	
@@ -15,6 +15,11 @@ public class LUI extends Instruction implements Instructable{
 	public void execute() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void write() throws Exception {
+		register_operand.setValue(immediate_operand.value);
 	}
 
 }

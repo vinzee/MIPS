@@ -1,8 +1,9 @@
 package Instructions;
 
 import Instructions.Operands.*;
+import Managers.MemoryManager;
 
-public class SW extends Instruction implements Instructable{
+public class SW extends Instruction implements Instructable, Memorable{
 	RegisterOperand register_operand;
 	MemoryOperand memory_operand;
 	
@@ -15,6 +16,11 @@ public class SW extends Instruction implements Instructable{
 	public void execute() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void write() throws Exception {
+		MemoryManager.write(memory_operand.final_address(), "word", (int) register_operand.getValue());
 	}
 
 }

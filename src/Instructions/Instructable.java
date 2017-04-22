@@ -1,6 +1,8 @@
 package Instructions;
 
 public interface Instructable {
-	public void execute();
-//	public void parse();
+//	public void fetch();
+//	public void issue();
+//	public void read_operands();
+	public void execute() throws Exception;
 }

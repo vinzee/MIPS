@@ -4,6 +4,11 @@ import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
 
+// Issue — decode instructions & check for structural hazards
+// Wait conditions: (1) the required FU is free; (2) no other instruction writes to the same register destination (to avoid WAW)
+// Actions: (1) the instruction proceeds to the FU; (2) scoreboard updates its internal data structure
+// If an instruction is stalled at this stage, no other instructions can proceed
+
 public class IssueStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;
@@ -28,7 +33,8 @@ public class IssueStage {
 	}
 
 	private static boolean canIssue(Instruction inst) {
-		// TODO Auto-generated method stub
-		return !IssueUnit.i.isBusy();
+		if(IssueUnit.i.isBusy()) return false;
+
+		return true;
 	}
 }

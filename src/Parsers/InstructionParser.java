@@ -60,7 +60,7 @@ public class InstructionParser {
 		MemoryOperand memory_operand = null;
 		RegisterOperand register_operand1 = null, register_operand2 = null, register_operand3 = null;
 		
-		System.out.println(opcode + Arrays.asList(operands));
+//		System.out.println(opcode + Arrays.asList(operands));
 		switch(opcode){
 		case "LW": // Load Word
 			register_operand1 = new RegisterOperand(operands[0]);

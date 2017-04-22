@@ -24,4 +24,9 @@ public class MemoryOperand extends Operand {
 			this.base_address = Integer.parseInt(str);			
 		}
 	}
+
+	public int final_address() {
+		return this.base_address + this.offset_address;
+	}
+	
 }

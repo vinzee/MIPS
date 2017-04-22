@@ -19,6 +19,7 @@ public class MemoryParser {
 				count += 1;
 			}
 			
+			MemoryManager.end_address = MemoryManager.start_address + count;
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -29,6 +30,6 @@ public class MemoryParser {
 	}
 
 	private static void parseLine(String line, int count) {
-		MemoryManager.writeMemoryAddress(MemoryManager.start_address + count, Integer.parseInt(line, 2));
+		MemoryManager.memory.put(MemoryManager.start_address + count, Integer.parseInt(line, 2));
 	}
 }

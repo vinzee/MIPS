@@ -1,8 +1,9 @@
 package Instructions;
 
 import Instructions.Operands.*;
+import Managers.MemoryManager;
 
-public class SD extends Instruction implements Instructable{
+public class SD extends Instruction implements Instructable, Memorable{
 	RegisterOperand register_operand;
 	MemoryOperand memory_operand;
 	
@@ -17,4 +18,8 @@ public class SD extends Instruction implements Instructable{
 		
 	}
 
+	@Override
+	public void write() throws Exception {
+		MemoryManager.write(memory_operand.final_address(), "double", (int) register_operand.getValue());
+	}
 }

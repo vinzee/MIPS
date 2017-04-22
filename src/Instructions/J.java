@@ -10,7 +10,7 @@ public class J extends Instruction implements Instructable{
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
+//		throw new Error("J shouldn't have execute stage");
 	}
 }
