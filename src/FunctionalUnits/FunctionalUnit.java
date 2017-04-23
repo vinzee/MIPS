@@ -1,11 +1,10 @@
 package FunctionalUnits;
 
-public class FunctionalUnit {
+public abstract class FunctionalUnit {
 	private boolean busy = false;
-	private int latency = 0;
+	public int latency = 0;
 
 	public FunctionalUnit(int latency) {
-		super();
 		this.latency = latency;
 	}
 

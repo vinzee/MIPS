@@ -1,7 +1,11 @@
 package Instructions;
 
-public class J extends Instruction implements Instructable{
-	String label;
+import java.util.ArrayList;
+
+import Instructions.Operands.RegisterOperand;
+
+public class J extends Instruction{
+	public String label;
 	
 	public J(String label) {
 		super();
@@ -9,8 +13,20 @@ public class J extends Instruction implements Instructable{
 	}
 
 	@Override
-	public void execute() {
-		// TODO Auto-generated method stub		
-//		throw new Error("J shouldn't have execute stage");
+	public void execute() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public RegisterOperand getDestinationRegister() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

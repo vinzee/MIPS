@@ -1,8 +1,11 @@
 package Instructions;
 
-import Instructions.Operands.*;
+import java.util.ArrayList;
 
-public class LI extends Instruction implements Instructable, Memorable{
+import Instructions.Operands.*;
+import Managers.RegisterManager;
+
+public class LI extends Instruction implements Memorable{
 	RegisterOperand register_operand;
 	ImmediateOperand immediate_operand;
 	
@@ -12,13 +15,27 @@ public class LI extends Instruction implements Instructable, Memorable{
 	}
 
 	@Override
-	public void execute() {
-		// TODO Auto-generated method stub		
+	public void write() throws Exception {
+		register_operand.setValue(immediate_operand.value);
+		RegisterManager.write(register_operand, immediate_operand.value);
 	}
 
 	@Override
-	public void write() throws Exception {
-		register_operand.setValue(immediate_operand.value);
+	public void execute() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public RegisterOperand getDestinationRegister() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

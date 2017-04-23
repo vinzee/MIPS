@@ -23,6 +23,15 @@ public class RegisterOperand extends Operand {
 	public double setValue(double value) throws Exception {	
 		return RegisterManager.write(this, value);
 	}
+	public boolean isBeingRead() throws Exception {	
+		return RegisterManager.getStatus(this) == "read";
+	}	
+	public boolean isBeingWritten() throws Exception {	
+		return RegisterManager.getStatus(this) == "write";
+	}	
+	public void setStatus(String value) throws Exception {	
+		RegisterManager.setStatus(this, value);
+	}	
 	
 	private static int getIndex(String register_name) throws Exception {	
 		return Integer.parseInt(register_name.substring(1,register_name.length()));

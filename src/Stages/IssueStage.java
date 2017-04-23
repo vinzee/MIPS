@@ -3,6 +3,7 @@ package Stages;
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
+import Managers.FunctionalUnitManager;
 
 // Issue — decode instructions & check for structural hazards
 // Wait conditions: (1) the required FU is free; (2) no other instruction writes to the same register destination (to avoid WAW)
@@ -13,7 +14,7 @@ public class IssueStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;
 
-	public static void execute() {
+	public static void execute() throws Exception {
 		if(FetchStage.prev_inst_index != -1){
 			Instruction inst = MIPS.instructions.get(FetchStage.prev_inst_index);
 			
@@ -24,6 +25,8 @@ public class IssueStage {
 				IssueUnit.i.setBusy(true);
 				IssueUnit.i.execute(inst);
 				
+				inst.markRegisterStatus();
+				
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
 			}		
@@ -32,9 +35,9 @@ public class IssueStage {
 		}
 	}
 
-	private static boolean canIssue(Instruction inst) {
+	private static boolean canIssue(Instruction inst) throws Exception {
 		if(IssueUnit.i.isBusy()) return false;
-
-		return true;
+		if(!FunctionalUnitManager.isUnitAvailable(inst)) return false; // check structural hazards
+		return !inst.isDestinationBeingWritten(); // check WAW hazards
 	}
 }

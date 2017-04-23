@@ -1,9 +1,12 @@
 package Instructions;
 
+import java.util.ArrayList;
+
 import Instructions.Operands.*;
 import Managers.MemoryManager;
+import Managers.RegisterManager;
 
-public class LD extends Instruction implements Instructable, Memorable{
+public class LD extends Instruction implements Memorable{
 	RegisterOperand register_operand;
 	MemoryOperand memory_operand;
 	
@@ -13,15 +16,28 @@ public class LD extends Instruction implements Instructable, Memorable{
 	}
 
 	@Override
+	public void write() throws Exception {
+		double value = MemoryManager.read(memory_operand.final_address(), "double");
+		register_operand.setValue(value);
+		RegisterManager.write(register_operand, value);
+	}
+
+	@Override
 	public void execute() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void write() throws Exception {
-		double value = MemoryManager.read(memory_operand.final_address(), "double");
-		register_operand.setValue(value);
+	public RegisterOperand getDestinationRegister() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

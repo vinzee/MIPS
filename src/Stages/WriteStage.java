@@ -9,16 +9,18 @@ public class WriteStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;		
 
-	public static void execute() {
+	public static void execute() throws Exception {
 		if(ExecuteStage.prev_inst_index != -1){
 			Instruction inst = MIPS.instructions.get(ExecuteStage.prev_inst_index);
 			
 			if(canIssue(inst)){
 				curr_inst_index = ExecuteStage.prev_inst_index;
 				System.out.println("Write- " + ExecuteStage.prev_inst_index + " - " + inst.toString());
-				ExecuteUnit.i.setBusy(false);
+//				ExecuteUnit.i.setBusy(false);
 //				WriteUnit.i.setBusy(true);
 				WriteUnit.i.execute(inst);
+
+				inst.unMarkRegisterStatus();
 				
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
@@ -28,8 +30,8 @@ public class WriteStage {
 		}
 	}
 
-	private static boolean canIssue(Instruction inst) {
-		// TODO Auto-generated method stub
-		return !WriteUnit.i.isBusy();
+	private static boolean canIssue(Instruction inst) throws Exception {
+		if(WriteUnit.i.isBusy()) return false;
+		return !inst.isDestinationBeingRead(); // check WAR hazards
 	}
 }

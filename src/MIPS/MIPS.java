@@ -13,6 +13,9 @@ public class MIPS {
 	public static HashMap<String, Integer> label_map = new HashMap<String, Integer>();	
 
 	public static boolean halt = false;
+//	public static boolean structural_stall = false;
+//	public static boolean control_stall = false;
+//	public static boolean data_stall = false;
 	public static int halt_count = 0;
 	public static int cycle = 1;
 
@@ -21,13 +24,13 @@ public class MIPS {
 		MemoryParser.parse(args[1]);
 		ConfigParser.parse(args[2]);
 		OutputManager.init(args[3]);
-
+		
 		MIPS.execute_scoreboard();
 	}
 	
 	// starting point
-	static void execute_scoreboard(){
-		while(true){
+	static void execute_scoreboard() throws Exception{
+		while(cycle < 20){ // true
 			System.out.println("------Cycle-" + cycle + "------");
 
 			WriteStage.execute();
@@ -52,4 +55,8 @@ public class MIPS {
 		halt = true;
 		FetchStage.curr_inst_index = -1;		
 	}
+	
+//	public static boolean isStall(){
+//		return structural_stall | data_stall | control_stall;
+//	}
 }

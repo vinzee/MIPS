@@ -12,7 +12,7 @@ public class ReadOperandsStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;		
 
-	public static void execute() {
+	public static void execute() throws Exception {
 		if(IssueStage.prev_inst_index != -1){
 			Instruction inst = MIPS.instructions.get(IssueStage.prev_inst_index);
 			
@@ -31,8 +31,8 @@ public class ReadOperandsStage {
 		}
 	}
 
-	private static boolean canIssue(Instruction inst) {
-		// TODO Auto-generated method stub
-		return !ReadOperandUnit.i.isBusy();
+	private static boolean canIssue(Instruction inst) throws Exception {
+		if(ReadOperandUnit.i.isBusy()) return false;
+		return inst.areSourcesBeingWritten(); // check RAW hazards
 	}
 }

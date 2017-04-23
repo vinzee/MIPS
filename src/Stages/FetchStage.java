@@ -11,26 +11,21 @@ public class FetchStage {
 	public static int curr_inst_index = 0;
 	
 	public static void execute() {
-		if(curr_inst_index != -1){
+		if(canFetch() && curr_inst_index != -1){ //  && !MIPS.isStall()
 			Instruction inst = MIPS.instructions.get(curr_inst_index);
-			if(inst == null){
-				throw new Error("Invalid instruction index");
-			}
-					
-			if(canFetch(inst)){
-				System.out.println("Fetch- " + curr_inst_index + " - " + inst.toString());
-				FetchUnit.i.setBusy(true);
-				FetchUnit.i.execute(inst);
-				prev_inst_index = curr_inst_index;
-				curr_inst_index++;
-			}
+			if(inst == null) throw new Error("Invalid instruction index: " + curr_inst_index);
+				
+			System.out.println("Fetch- " + curr_inst_index + " - " + inst.toString());
+			FetchUnit.i.setBusy(true);
+			FetchUnit.i.execute(inst);
+			prev_inst_index = curr_inst_index;
+			curr_inst_index++;
 		}else{
 			prev_inst_index = -1;
 		}
 	}
 	
-	private static boolean canFetch(Instruction inst) {
-		// TODO - check whether previous inst has moved forward
+	private static boolean canFetch() {
 		return !FetchUnit.i.isBusy();
 	}
 

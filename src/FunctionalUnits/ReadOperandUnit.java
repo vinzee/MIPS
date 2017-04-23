@@ -1,6 +1,9 @@
 package FunctionalUnits;
 
-import Instructions.Instruction;
+import Instructions.*;
+import MIPS.MIPS;
+import Stages.FetchStage;
+import Stages.IssueStage;
 
 public class ReadOperandUnit extends FunctionalUnit {
 	public static final ReadOperandUnit i = new ReadOperandUnit(1);
@@ -9,8 +12,15 @@ public class ReadOperandUnit extends FunctionalUnit {
 		super(latency);
 	}
 
-	public void execute(Instruction inst) {
-		// TODO Auto-generated method stub
-		
+	public void execute(Instruction inst) throws Exception {
+		if((inst instanceof BEQ) && ((BEQ)inst).isConditionSatisfied()){
+			IssueStage.curr_inst_index = -1;
+			int goto_index = MIPS.label_map.get(((BEQ) inst).label);
+			FetchStage.curr_inst_index = goto_index;
+		}else if((inst instanceof BNE) && ((BNE)inst).isConditionSatisfied()){
+			IssueStage.curr_inst_index = -1;
+			int goto_index = MIPS.label_map.get(((BNE) inst).label);
+			FetchStage.curr_inst_index = goto_index;
+		}
 	}
 }

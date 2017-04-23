@@ -3,6 +3,7 @@ package Stages;
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
+import Managers.FunctionalUnitManager;
 
 // Execution — operate on operands (EX)
 // Actions: The functional unit begins execution upon receiving operands.
@@ -12,27 +13,35 @@ public class ExecuteStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;		
 
-	public static void execute() {
+	public static void execute() throws Exception {
 		if(ReadOperandsStage.prev_inst_index != -1){
 			Instruction inst = MIPS.instructions.get(ReadOperandsStage.prev_inst_index);
 			
-			if(canIssue(inst)){
+			if(canExecute(inst)){
 				System.out.println("Execute- " + ReadOperandsStage.prev_inst_index + " - " + inst.toString());
 				curr_inst_index = ReadOperandsStage.prev_inst_index;
 				ReadOperandUnit.i.setBusy(false);
-				ExecuteUnit.i.setBusy(true);
-				ExecuteUnit.i.execute(inst);
+
+				FunctionalUnit unit = FunctionalUnitManager.assign_unit(inst, curr_inst_index);
+	        	unit.setBusy(true);
 				
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
-			}		
+			}else{
+				System.out.println("No execution unit found");
+			}
 		}else{
 			prev_inst_index = -1;
 		}
+		
+		Instruction inst_finished_execution = FunctionalUnitManager.execute_busy_units();
+
+		if(inst_finished_execution != null){
+			inst_finished_execution.execute();
+		}
 	}
 
-	private static boolean canIssue(Instruction inst) {
-		// TODO Auto-generated method stub
-		return !ExecuteUnit.i.isBusy();
+	private static boolean canExecute(Instruction inst) throws Exception {
+		return true; // already checked in issue
 	}
 }

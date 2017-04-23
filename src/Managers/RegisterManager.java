@@ -9,7 +9,26 @@ public class RegisterManager {
 
 	static String[] integer_register_status = new String[32];
 	static String[] floating_point_register_status = new String[32];
+
+	public static String getStatus(RegisterOperand register_operand) throws Exception {
+		if(register_operand.floating_point){
+			return integer_register_status[register_operand.index-1];
+		}else{
+			return floating_point_register_status[register_operand.index-1];
+		}
+	}
 	
+	// allowed values
+	public static String setStatus(RegisterOperand register_operand, String value) throws Exception {
+		if(value != "writing" && value != "reading") throw new Error("Invalid Register Status: " + value);
+
+		if(register_operand.floating_point){
+			return integer_register_status[register_operand.index-1] = value;
+		}else{
+			return floating_point_register_status[register_operand.index-1] = value;
+		}
+	}
+
 	public static double read(RegisterOperand register_operand) throws Exception {
 		if(register_operand.floating_point){
 			return floating_point_registers[register_operand.index-1];

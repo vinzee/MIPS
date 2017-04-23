@@ -1,8 +1,10 @@
 package Instructions;
 
+import java.util.ArrayList;
+
 import Instructions.Operands.RegisterOperand;
 
-public class SUBD extends Instruction implements Instructable{
+public class SUBD extends Instruction implements Executable{
 	RegisterOperand register_operand1;
 	RegisterOperand register_operand2;
 	RegisterOperand register_operand3;
@@ -18,6 +20,18 @@ public class SUBD extends Instruction implements Instructable{
 	public void execute() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public RegisterOperand getDestinationRegister() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
