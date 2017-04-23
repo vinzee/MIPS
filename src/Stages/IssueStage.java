@@ -23,21 +23,34 @@ public class IssueStage {
 				System.out.println("Issue- " + curr_inst_index + " - " + inst.toString());
 				FetchUnit.i.setBusy(false);
 				IssueUnit.i.setBusy(true);
-				IssueUnit.i.execute(inst);
-				
 				inst.markRegisterStatus();
-				
+
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
+				IssueUnit.i.execute(inst);								
+			}else{
+				// initiate stall
+				prev_inst_index = -1;
 			}		
 		}else{
+			// relay stall ahead
 			prev_inst_index = -1;
 		}
 	}
 
 	private static boolean canIssue(Instruction inst) throws Exception {
 		if(IssueUnit.i.isBusy()) return false;
-		if(!FunctionalUnitManager.isUnitAvailable(inst)) return false; // check structural hazards
-		return !inst.isDestinationBeingWritten(); // check WAW hazards
+		
+		if(!FunctionalUnitManager.isUnitAvailable(inst)){  // check structural hazards
+			System.out.println("structural hazard");
+			return false;
+		}
+		
+		if(inst.isDestinationBeingWritten()){ // check WAW hazards
+			System.out.println("WAW hazard");
+			return false;
+		}
+		
+		return true;
 	}
 }

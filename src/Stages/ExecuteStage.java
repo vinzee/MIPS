@@ -22,15 +22,18 @@ public class ExecuteStage {
 				curr_inst_index = ReadOperandsStage.prev_inst_index;
 				ReadOperandUnit.i.setBusy(false);
 
-				FunctionalUnit unit = FunctionalUnitManager.assign_unit(inst, curr_inst_index);
+				FunctionalUnit unit = FunctionalUnitManager.allocate_unit(inst, curr_inst_index);
 	        	unit.setBusy(true);
 				
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
 			}else{
+				// initiate stall
+				prev_inst_index = -1;
 				System.out.println("No execution unit found");
 			}
 		}else{
+			// relay stall ahead
 			prev_inst_index = -1;
 		}
 		
@@ -42,6 +45,7 @@ public class ExecuteStage {
 	}
 
 	private static boolean canExecute(Instruction inst) throws Exception {
-		return true; // already checked in issue
+		// already checked for availability of execution unit in issue
+		return true;
 	}
 }

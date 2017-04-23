@@ -20,7 +20,7 @@ public class RegisterManager {
 	
 	// allowed values
 	public static String setStatus(RegisterOperand register_operand, String value) throws Exception {
-		if(value != "writing" && value != "reading") throw new Error("Invalid Register Status: " + value);
+		if(value != "writing" && value != "reading" && value != null) throw new Error("Invalid Register Status: " + value);
 
 		if(register_operand.floating_point){
 			return integer_register_status[register_operand.index-1] = value;

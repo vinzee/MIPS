@@ -21,18 +21,29 @@ public class ReadOperandsStage {
 				curr_inst_index = IssueStage.prev_inst_index;
 				IssueUnit.i.setBusy(false);
 				ReadOperandUnit.i.setBusy(true);
-				ReadOperandUnit.i.execute(inst);
 				
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
-			}		
+
+				ReadOperandUnit.i.execute(inst);
+			}else{
+				// initiate stall
+				prev_inst_index = -1;
+			}
 		}else{
+			// relay stall ahead
 			prev_inst_index = -1;
 		}
 	}
 
 	private static boolean canIssue(Instruction inst) throws Exception {
 		if(ReadOperandUnit.i.isBusy()) return false;
-		return inst.areSourcesBeingWritten(); // check RAW hazards
+		
+		if(inst.areSourcesBeingWritten()){ // check RAW hazards
+			System.out.println("RAW hazard");
+			return false;
+		}
+
+		return true;
 	}
 }

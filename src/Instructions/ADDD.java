@@ -24,27 +24,16 @@ public class ADDD extends Instruction implements Executable{
 	}
 
 	@Override
-	public boolean isDestinationBeingWritten() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean areSourcesBeingWritten() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public RegisterOperand getDestinationRegister() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return this.register_operand1;
 	}
 
 	@Override
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
+		source_registers.add(this.register_operand2);
+		source_registers.add(this.register_operand3);
+		return source_registers;
 	}
 
 }

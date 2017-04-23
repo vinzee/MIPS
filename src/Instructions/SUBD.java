@@ -18,8 +18,7 @@ public class SUBD extends Instruction implements Executable{
 	
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-		
+		// Do Nothing
 	}
 
 	@Override

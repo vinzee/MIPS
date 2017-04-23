@@ -22,18 +22,19 @@ public class BEQ extends Instruction{
 
 	@Override
 	public void execute() throws Exception {
-		// TODO Auto-generated method stub	
+		// Do Nothing
 	}
 
 	@Override
 	public RegisterOperand getDestinationRegister() throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
+		source_registers.add(this.register_operand1);
+		source_registers.add(this.register_operand2);
+		return source_registers;
 	}
 }

@@ -28,13 +28,14 @@ public class BNE extends Instruction{
 
 	@Override
 	public RegisterOperand getDestinationRegister() throws Exception {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
+		source_registers.add(this.register_operand1);
+		source_registers.add(this.register_operand2);
+		return source_registers;
 	}
 }

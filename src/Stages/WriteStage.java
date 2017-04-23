@@ -13,7 +13,7 @@ public class WriteStage {
 		if(ExecuteStage.prev_inst_index != -1){
 			Instruction inst = MIPS.instructions.get(ExecuteStage.prev_inst_index);
 			
-			if(canIssue(inst)){
+			if(canWrite(inst)){
 				curr_inst_index = ExecuteStage.prev_inst_index;
 				System.out.println("Write- " + ExecuteStage.prev_inst_index + " - " + inst.toString());
 //				ExecuteUnit.i.setBusy(false);
@@ -30,8 +30,14 @@ public class WriteStage {
 		}
 	}
 
-	private static boolean canIssue(Instruction inst) throws Exception {
+	private static boolean canWrite(Instruction inst) throws Exception {
 		if(WriteUnit.i.isBusy()) return false;
-		return !inst.isDestinationBeingRead(); // check WAR hazards
+		
+		if(inst.isDestinationBeingWritten()){ // check WAR hazards
+			System.out.println("WAR hazard");
+			return false;
+		}
+		
+		return true;
 	}
 }

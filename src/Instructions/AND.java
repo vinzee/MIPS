@@ -22,17 +22,17 @@ public class AND extends Instruction implements Executable{
 		double value = (int) RegisterManager.read(this.register_operand2) & (int) RegisterManager.read(this.register_operand3);
 		RegisterManager.write(this.register_operand1, value);
 	}
-
 	@Override
 	public RegisterOperand getDestinationRegister() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return this.register_operand1;
 	}
 
 	@Override
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
+		source_registers.add(this.register_operand2);
+		source_registers.add(this.register_operand3);
+		return source_registers;
 	}
 
 }

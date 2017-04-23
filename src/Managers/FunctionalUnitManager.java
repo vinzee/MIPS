@@ -17,7 +17,7 @@ public class FunctionalUnitManager {
 	public static ArrayList<FpMultiplierUnit> fp_multiplier_unit_pool = new ArrayList<FpMultiplierUnit>();
 	public static HashMap<FunctionalUnit, Integer[]> busy_units = new HashMap<FunctionalUnit, Integer[]>();
 
-	public static Instruction execute_busy_units(){
+	public static Instruction execute_busy_units() throws Exception{
 		Iterator<Entry<FunctionalUnit, Integer[]>> itr = busy_units.entrySet().iterator();
 		boolean passed_to_next_stage = false;
 		Instruction inst = null;
@@ -32,22 +32,13 @@ public class FunctionalUnitManager {
 	        	pair.setValue(inst_data);
 	        }
 	        
-	        System.out.println("execute_busy_units - " + unit.getClass().getSimpleName() + " : " + pair.getValue()[1]);
+	        System.out.println("------execute " + unit.getClass().getSimpleName() + " : " + pair.getValue()[1]);
 
-	        if(inst_data[1] == 0 && passed_to_next_stage){
+	        if(inst_data[1] == 0 && !passed_to_next_stage){
+	        	itr.remove();
 	        	passed_to_next_stage = true;
 	        	inst = MIPS.instructions.get(inst_data[0]);
-	        	
-	        	unit.setBusy(false);
-	        	if(unit instanceof FpAdderUnit){
-	        		fp_adder_unit_pool.add((FpAdderUnit) unit);
-	        	}else if(unit instanceof FpDividerUnit){
-	        		fp_divider_unit_pool.add((FpDividerUnit) unit);		        		
-	        	}else if(unit instanceof FpMultiplierUnit){
-	        		fp_multiplier_unit_pool.add((FpMultiplierUnit) unit);		        		
-	        	}
-	        	
-	        	itr.remove();	        	
+	        	deallocate_unit(unit);	        	
 	        }
 		}
 		
@@ -59,6 +50,8 @@ public class FunctionalUnitManager {
 		debug();
 
 		switch(type_of_unit){
+			case "NoUnit":
+				return true;
 			case "LoadUnit":
 				return !LoadUnit.i.isBusy();
 			case "IntegerUnit":
@@ -74,11 +67,13 @@ public class FunctionalUnitManager {
 		}
 	}
 	
-	public static FunctionalUnit assign_unit(Instruction inst, int inst_index) throws Exception{
+	public static FunctionalUnit allocate_unit(Instruction inst, int inst_index) throws Exception{
 		String type_of_unit = get_type_of_unit(inst);
 		FunctionalUnit unit = null;
-//		System.out.println("assign_unit - " + type_of_unit);
+		System.out.println("------allocate " + type_of_unit);
 		switch(type_of_unit){
+			case "NoUnit":
+				throw new Error("NoUnit should not run in ExecuteStage");
 			case "LoadUnit":
 				unit = LoadUnit.i;
 				break;
@@ -94,11 +89,24 @@ public class FunctionalUnitManager {
 			case "FpMultiplierUnit":
 				unit = fp_multiplier_unit_pool.remove(0);
 				break;
-		}		
+		}
 		
 		busy_units.put(unit, new Integer[]{inst_index, unit.latency});
 		
 		return unit;
+	}
+
+	public static void deallocate_unit(FunctionalUnit unit) throws Exception{
+    	System.out.println("------deallocate " + unit.getClass().getSimpleName());
+ 
+    	unit.setBusy(false);
+    	if(unit instanceof FpAdderUnit){
+    		fp_adder_unit_pool.add((FpAdderUnit) unit);
+    	}else if(unit instanceof FpDividerUnit){
+    		fp_divider_unit_pool.add((FpDividerUnit) unit);		        		
+    	}else if(unit instanceof FpMultiplierUnit){
+    		fp_multiplier_unit_pool.add((FpMultiplierUnit) unit);		        		
+    	}
 	}
 	
 	private static String get_type_of_unit(Instruction inst) {
@@ -113,20 +121,18 @@ public class FunctionalUnitManager {
 		case "LUI": 
 			type_of_unit = "LoadUnit";
 			break;
-		case "BEQ": 
-		case "BNE": 
 		case "AND": 
 		case "ANDI": 
 		case "OR": 
 		case "ORI": 
-		case "ADDD": 
-		case "SUBD": 
-			type_of_unit = "IntegerUnit";
-			break;
 		case "DADD": 
 		case "DADDI": 
 		case "DSUB": 
 		case "DSUBI": 
+			type_of_unit = "IntegerUnit";
+			break;
+		case "ADDD": 
+		case "SUBD": 
 			type_of_unit = "FpAdderUnit";
 			break;
 		case "MULD": 
@@ -135,9 +141,14 @@ public class FunctionalUnitManager {
 		case "DIVD": 
 			type_of_unit = "FpDividerUnit";
 			break;
+		case "BEQ": 
+		case "BNE": 
 		case "J": 
 		case "HLT": 
+			type_of_unit = "NoUnit";
 			break;
+		default:
+			throw new Error("No Functional Unit found for: " + inst_class);
 		}
 
 		return type_of_unit;

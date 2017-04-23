@@ -30,7 +30,7 @@ public class MIPS {
 	
 	// starting point
 	static void execute_scoreboard() throws Exception{
-		while(cycle < 20){ // true
+		while(true){
 			System.out.println("------Cycle-" + cycle + "------");
 
 			WriteStage.execute();

@@ -14,8 +14,7 @@ public class J extends Instruction{
 
 	@Override
 	public void execute() throws Exception {
-		// TODO Auto-generated method stub
-		
+		// Do Nothing
 	}
 
 	@Override
@@ -26,7 +25,7 @@ public class J extends Instruction{
 
 	@Override
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
+		return source_registers;
 	}
 }
