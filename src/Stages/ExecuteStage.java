@@ -3,7 +3,6 @@ package Stages;
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
-import Managers.OutputManager;
 
 // Execution — operate on operands (EX)
 // Actions: The functional unit begins execution upon receiving operands.

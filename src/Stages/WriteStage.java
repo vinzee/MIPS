@@ -14,7 +14,6 @@ public class WriteStage {
 
 	public static void execute() throws Exception {
 		if(previous_output_index != -1){
-			System.out.println("previous_output_index - " + previous_output_index);
 			FunctionalUnitData prev_fud = ExecutionUnit.busy_units.get(previous_output_index);
 			if(prev_fud != null){
 				ExecutionUnit.deallocate_unit(prev_fud.unit);	        	

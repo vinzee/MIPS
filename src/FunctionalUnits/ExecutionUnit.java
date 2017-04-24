@@ -69,13 +69,13 @@ public class ExecutionUnit {
 	}
 
 	public static void run_unit(int inst_index) {
-		System.out.println("run_unit");
+//		System.out.println("run_unit");
 		FunctionalUnitData fud = busy_units.get(inst_index);
 		fud.is_executing = true;
 		busy_units.put(inst_index, fud);
 	}
 	public static void stop_unit(int inst_index) {
-		System.out.println("stop_unit");
+//		System.out.println("stop_unit");
 		FunctionalUnitData fud = busy_units.get(inst_index);
 		fud.is_executing = false;
 		busy_units.put(inst_index, fud);
