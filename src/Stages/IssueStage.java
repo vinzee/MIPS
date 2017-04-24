@@ -3,7 +3,7 @@ package Stages;
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
-import Managers.FunctionalUnitManager;
+import Managers.OutputManager;
 
 // Issue — decode instructions & check for structural hazards
 // Wait conditions: (1) the required FU is free; (2) no other instruction writes to the same register destination (to avoid WAW)
@@ -13,6 +13,7 @@ import Managers.FunctionalUnitManager;
 public class IssueStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;
+	public static int output_index = -1;
 
 	public static void execute() throws Exception {
 		if(FetchStage.prev_inst_index != -1){
@@ -25,9 +26,13 @@ public class IssueStage {
 				IssueUnit.i.setBusy(true);
 				inst.markRegisterStatus();
 
+				OutputManager.output_table.get(output_index)[2] = MIPS.cycle;
+				ReadOperandsStage.output_index = output_index;
+
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
-				IssueUnit.i.execute(inst);								
+				IssueUnit.i.execute(inst);					
+				ExecutionUnit.allocate_unit(inst, curr_inst_index, output_index);
 			}else{
 				// initiate stall
 				prev_inst_index = -1;
@@ -41,13 +46,15 @@ public class IssueStage {
 	private static boolean canIssue(Instruction inst) throws Exception {
 		if(IssueUnit.i.isBusy()) return false;
 		
-		if(!FunctionalUnitManager.isUnitAvailable(inst)){  // check structural hazards
-			System.out.println("structural hazard");
+		if(!ExecutionUnit.isUnitAvailable(inst)){  // check structural hazards
+			MIPS.print("Structural Hazard");
+			OutputManager.output_table.get(output_index)[8] = 1;
 			return false;
 		}
 		
 		if(inst.isDestinationBeingWritten()){ // check WAW hazards
-			System.out.println("WAW hazard");
+			MIPS.print("WAW Hazard");
+			OutputManager.output_table.get(output_index)[7] = 1;
 			return false;
 		}
 		

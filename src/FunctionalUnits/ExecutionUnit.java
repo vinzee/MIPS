@@ -1,45 +1,47 @@
-package Managers;
+package FunctionalUnits;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import FunctionalUnits.*;
 import Instructions.Instruction;
 import MIPS.MIPS;
+import Managers.OutputManager;
+import Stages.*;
 
-public class FunctionalUnitManager {
+public class ExecutionUnit {
 	HashMap<FunctionalUnit, Integer> status = new HashMap<FunctionalUnit, Integer>();
 	public static ArrayList<FpAdderUnit> fp_adder_unit_pool = new ArrayList<FpAdderUnit>(); 
 	public static ArrayList<FpDividerUnit> fp_divider_unit_pool = new ArrayList<FpDividerUnit>(); 
 	public static ArrayList<FpMultiplierUnit> fp_multiplier_unit_pool = new ArrayList<FpMultiplierUnit>();
-	public static HashMap<FunctionalUnit, Integer[]> busy_units = new HashMap<FunctionalUnit, Integer[]>();
+	public static HashMap<Integer, FunctionalUnitData> busy_units = new HashMap<Integer, FunctionalUnitData>();
 
 	public static Instruction execute_busy_units() throws Exception{
-		Iterator<Entry<FunctionalUnit, Integer[]>> itr = busy_units.entrySet().iterator();
+		Iterator<Entry<Integer, FunctionalUnitData>> itr = busy_units.entrySet().iterator();
 		boolean passed_to_next_stage = false;
 		Instruction inst = null;
 		
 		while (itr.hasNext()) {
-	        Map.Entry<FunctionalUnit, Integer[]> pair = (Map.Entry<FunctionalUnit, Integer[]>)itr.next();
-	        FunctionalUnit unit = pair.getKey();
-	        Integer[] inst_data = pair.getValue();
+	        Map.Entry<Integer, FunctionalUnitData> pair = (Map.Entry<Integer, FunctionalUnitData>)itr.next();
+	        FunctionalUnitData fud = pair.getValue();
 	        
-	        if(inst_data[1] != 0){
-	        	inst_data[1] -= 1;
-	        	pair.setValue(inst_data);
-	        }
-	        
-	        System.out.println("------execute " + unit.getClass().getSimpleName() + " : " + pair.getValue()[1]);
-
-	        if(inst_data[1] == 0 && !passed_to_next_stage){
-	        	itr.remove();
-	        	passed_to_next_stage = true;
-	        	inst = MIPS.instructions.get(inst_data[0]);
-	        	deallocate_unit(unit);	        	
-	        }
+	        if(fud.is_executing){ // marked to run	        			        
+	            if(fud.remaining_latency != 0){
+			        System.out.println("------execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
+		        	fud.remaining_latency -= 1;
+		        	busy_units.put(fud.output_index, fud);
+		        }
+	            if(fud.remaining_latency == 0 && !passed_to_next_stage){
+		        	passed_to_next_stage = true;
+		        	// TODO - move this to execute stage
+		        	OutputManager.output_table.get(fud.output_index)[4] = MIPS.cycle;
+		        	ExecuteStage.prev_inst_index = fud.inst_index;
+					WriteStage.output_index = fud.output_index;
+		        }
+		    }
 		}
 		
 		return inst;
@@ -47,7 +49,6 @@ public class FunctionalUnitManager {
 
 	public static boolean isUnitAvailable(Instruction inst) throws Exception{
 		String type_of_unit = get_type_of_unit(inst);
-		debug();
 
 		switch(type_of_unit){
 			case "NoUnit":
@@ -66,14 +67,28 @@ public class FunctionalUnitManager {
 				throw new Error("invalid functional unit type - " + type_of_unit);
 		}
 	}
+
+	public static void run_unit(int inst_index) {
+		System.out.println("run_unit");
+		FunctionalUnitData fud = busy_units.get(inst_index);
+		fud.is_executing = true;
+		busy_units.put(inst_index, fud);
+	}
+	public static void stop_unit(int inst_index) {
+		System.out.println("stop_unit");
+		FunctionalUnitData fud = busy_units.get(inst_index);
+		fud.is_executing = false;
+		busy_units.put(inst_index, fud);
+	}
 	
-	public static FunctionalUnit allocate_unit(Instruction inst, int inst_index) throws Exception{
+	public static void allocate_unit(Instruction inst, int inst_index, int output_index) throws Exception{
 		String type_of_unit = get_type_of_unit(inst);
 		FunctionalUnit unit = null;
-		System.out.println("------allocate " + type_of_unit);
+		System.out.println("------allocate " + type_of_unit + " - " + output_index);
+		
 		switch(type_of_unit){
 			case "NoUnit":
-				throw new Error("NoUnit should not run in ExecuteStage");
+				return;
 			case "LoadUnit":
 				unit = LoadUnit.i;
 				break;
@@ -90,10 +105,11 @@ public class FunctionalUnitManager {
 				unit = fp_multiplier_unit_pool.remove(0);
 				break;
 		}
-		
-		busy_units.put(unit, new Integer[]{inst_index, unit.latency});
-		
-		return unit;
+		unit.setBusy(true);
+		FunctionalUnitData fud = new FunctionalUnitData(inst_index, unit, unit.latency, output_index);
+		busy_units.put(output_index, fud);
+
+		debug();
 	}
 
 	public static void deallocate_unit(FunctionalUnit unit) throws Exception{
@@ -107,6 +123,7 @@ public class FunctionalUnitManager {
     	}else if(unit instanceof FpMultiplierUnit){
     		fp_multiplier_unit_pool.add((FpMultiplierUnit) unit);		        		
     	}
+		debug();
 	}
 	
 	private static String get_type_of_unit(Instruction inst) {
@@ -157,9 +174,8 @@ public class FunctionalUnitManager {
 	public static void debug() throws Exception {
 		System.out.print("-----FU's------load: " + LoadUnit.i.isBusy());
 		System.out.print(", integer:" + IntegerUnit.i.isBusy());
-		System.out.print(", adder: " + FunctionalUnitManager.fp_adder_unit_pool.size());
-		System.out.print(", divider: " + FunctionalUnitManager.fp_divider_unit_pool.size());
-		System.out.println(", multiplier: " + FunctionalUnitManager.fp_multiplier_unit_pool.size());
+		System.out.print(", adder: " + ExecutionUnit.fp_adder_unit_pool.size());
+		System.out.print(", divider: " + ExecutionUnit.fp_divider_unit_pool.size());
+		System.out.println(", multiplier: " + ExecutionUnit.fp_multiplier_unit_pool.size());
 	}
-
 }

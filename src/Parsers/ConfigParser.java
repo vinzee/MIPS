@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import FunctionalUnits.*;
-import Managers.FunctionalUnitManager;
 
 public class ConfigParser {
 	public static void parse(String filepath) throws Exception {
@@ -33,19 +32,19 @@ public class ConfigParser {
 			case "fp adder":
 				for(int i=0;i<no;i++){
 					FpAdderUnit unit = new FpAdderUnit(Integer.parseInt(m[1].trim()));
-					FunctionalUnitManager.fp_adder_unit_pool.add(unit);
+					ExecutionUnit.fp_adder_unit_pool.add(unit);
 				}
 				break;
 			case "fp multiplier":
 				for(int i=0;i<no;i++){
 					FpMultiplierUnit unit = new FpMultiplierUnit(Integer.parseInt(m[1].trim()));
-					FunctionalUnitManager.fp_multiplier_unit_pool.add(unit);
+					ExecutionUnit.fp_multiplier_unit_pool.add(unit);
 				}
 				break;
 			case "fp divider":
 				for(int i=0;i<no;i++){
 					FpDividerUnit unit = new FpDividerUnit(Integer.parseInt(m[1].trim()));
-					FunctionalUnitManager.fp_divider_unit_pool.add(unit);
+					ExecutionUnit.fp_divider_unit_pool.add(unit);
 				}
 				break;
 			case "i-cache":

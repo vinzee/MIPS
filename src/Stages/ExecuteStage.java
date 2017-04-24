@@ -3,7 +3,7 @@ package Stages;
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
-import Managers.FunctionalUnitManager;
+import Managers.OutputManager;
 
 // Execution — operate on operands (EX)
 // Actions: The functional unit begins execution upon receiving operands.
@@ -12,6 +12,7 @@ import Managers.FunctionalUnitManager;
 public class ExecuteStage {
 	public static int prev_inst_index = -1;
 	public static int curr_inst_index = -1;		
+	public static int output_index = -1;
 
 	public static void execute() throws Exception {
 		if(ReadOperandsStage.prev_inst_index != -1){
@@ -22,9 +23,8 @@ public class ExecuteStage {
 				curr_inst_index = ReadOperandsStage.prev_inst_index;
 				ReadOperandUnit.i.setBusy(false);
 
-				FunctionalUnit unit = FunctionalUnitManager.allocate_unit(inst, curr_inst_index);
-	        	unit.setBusy(true);
-				
+				ExecutionUnit.run_unit(curr_inst_index);
+	    		
 				prev_inst_index = curr_inst_index;
 				curr_inst_index++;
 			}else{
@@ -37,7 +37,7 @@ public class ExecuteStage {
 			prev_inst_index = -1;
 		}
 		
-		Instruction inst_finished_execution = FunctionalUnitManager.execute_busy_units();
+		Instruction inst_finished_execution = ExecutionUnit.execute_busy_units();
 
 		if(inst_finished_execution != null){
 			inst_finished_execution.execute();
