@@ -17,19 +17,16 @@ public class ExecuteStage {
 
 	public static void execute() throws Exception {
 		if(gid_queue.size() != 0){
-			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
+//			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
 			
 			int id = OutputManager.read(gid_queue.peek(), 0);
 			Instruction inst = MIPS.instructions.get(id);
 			
-			if(canExecute(inst)){
-				int gid = gid_queue.remove();
-				System.out.println("Execute- " + gid + " - " + inst.toString());
-				ReadOperandUnit.i.setBusy(false);
+			int gid = gid_queue.remove();
+			System.out.println("Execute- " + gid + " - " + inst.toString());
 
-//				inst.markSourceRegisterStatus();
-				ExecutionUnit.run_unit(gid);
-			}
+//			inst.markSourceRegisterStatus();
+			ExecutionUnit.run_unit(gid);
 		}
 		
 		FunctionalUnitData fud = ExecutionUnit.execute_busy_units();
@@ -39,10 +36,5 @@ public class ExecuteStage {
         	OutputManager.write(fud.gid, 4, MIPS.cycle);
         	WriteStage.gid_queue.add(fud.gid);     	
 		}
-	}
-
-	// already checked for availability of execution unit in issue
-	private static boolean canExecute(Instruction inst) throws Exception {
-		return true;
 	}
 }

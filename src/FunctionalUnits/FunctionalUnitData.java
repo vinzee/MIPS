@@ -4,7 +4,6 @@ public class FunctionalUnitData{
 	public FunctionalUnit unit;
 	public int id;
 	public int gid;
-	public int total_latency;	
 	public int remaining_latency;	
 	public boolean is_executing;
 	
@@ -12,6 +11,6 @@ public class FunctionalUnitData{
 		this.id = id;
 		this.gid = gid;
 		this.unit = unit;
-		this.total_latency = this.remaining_latency = total_latency;
+		this.remaining_latency = total_latency;
 	}
 }

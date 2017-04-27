@@ -23,37 +23,30 @@ public class WriteStage {
 		}
 
 		if(gid_queue.size() != 0){
-			if(gid_queue.peek() == -1){ gid_queue.remove(); prev_gid = -1; return; }
+//			if(gid_queue.peek() == -1){ gid_queue.remove(); prev_gid = -1; return; }
 
 			int id = OutputManager.read(gid_queue.peek(), 0);
 			Instruction inst = MIPS.instructions.get(id);
 			
-			if(canWrite(inst)){
-				int gid = gid_queue.remove();
-				System.out.println("Write: " + gid + " - " + inst.toString());
-				WriteUnit.i.execute(inst);
-				
-				ExecutionUnit.stop_unit(gid);
-				OutputManager.write(gid, 5, MIPS.cycle);
-				prev_gid = gid;
-			}else{
-				prev_gid = -1;
-			}
+			int gid = gid_queue.remove();
+			System.out.println("Write: " + gid + " - " + inst.toString());
+			WriteUnit.i.execute(inst);
+
+			ExecutionUnit.stop_unit(gid);
+			OutputManager.write(gid, 5, MIPS.cycle);
+			prev_gid = gid;
 		}else{
-			prev_gid = -1;			
+			prev_gid = -1;
 		}
 	}
 
-	private static boolean canWrite(Instruction inst) throws Exception {
-//		if(WriteUnit.i.isBusy()) return false;
-		
+//	private static boolean canWrite(Instruction inst) throws Exception {
 		// TODO - Ask if this is to be checked
 //		if(inst.isDestinationBeingRead()){ // check WAR hazards
 //			System.out.println("WAR hazard(DestinationBeingRead): " + inst.toString());
 //			OutputManager.write_silent(gid_queue.peek(), 9, 1);
 //			return false;
-//		}
-		
-		return true;
-	}
+//		}ssss
+//		return true;
+//	}
 }

@@ -28,6 +28,7 @@ public class ExecutionUnit {
 	            if(fud.remaining_latency != 0){
 			        System.out.println("FU execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
 		        	fud.remaining_latency -= 1;
+//		        	pair.setValue(fud); // concurrent hashmap update error
 		        	busy_units.put(fud.id, fud);
 		        }
 	            if(fud.remaining_latency == 0){

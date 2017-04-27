@@ -18,7 +18,7 @@ public class IssueStage {
 
 	public static void execute() throws Exception {
 		if(gid_queue.size() != 0){
-			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
+//			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
 
 			int id = OutputManager.read(gid_queue.peek(), 0);
 			Instruction inst = MIPS.instructions.get(id);
@@ -32,17 +32,11 @@ public class IssueStage {
 				ExecutionUnit.allocate_unit(inst, id, gid);
 
 				OutputManager.write(gid, 2, MIPS.cycle);				
-				IssueUnit.i.setBusy(false);
 			}		
 		}
 	}
 
 	private static boolean canIssue(Instruction inst) throws Exception {
-//		if(IssueUnit.i.isBusy()){
-//			MIPS.print("IssueUnit.i.isBusy: " + inst.toString());
-//			return false;
-//		}
-		
 		if(!ExecutionUnit.isUnitAvailable(inst)){  // check structural hazards
 			MIPS.print("Structural Hazard: " + inst.toString());
 			OutputManager.write_silent(gid_queue.peek(), 8, 1);

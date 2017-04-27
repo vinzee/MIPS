@@ -11,15 +11,15 @@ public class ReadOperandUnit extends FunctionalUnit {
 		super(latency);
 	}
 
-	public void execute(Instruction inst) throws Exception {
+	public void execute(Instruction inst, int gid) throws Exception {
 		if((inst instanceof BEQ) && ((BEQ)inst).isConditionSatisfied()){
 			FetchStage.id = MIPS.label_map.get(((BNE) inst).label);
-			IssueStage.gid_queue.add(-1);
-			ReadOperandsStage.gid_queue.add(-1);
+//			IssueStage.gid_queue.poll();
 		}else if((inst instanceof BNE) && ((BNE)inst).isConditionSatisfied()){
-			FetchStage.id = MIPS.label_map.get(((BNE) inst).label);
-			IssueStage.gid_queue.add(-1);
-			ReadOperandsStage.gid_queue.add(-1);
+			FetchStage.id = MIPS.label_map.get(((BNE) inst).label.toUpperCase());
+//			IssueStage.gid_queue.poll();sssss
+		}else{
+			ExecuteStage.gid_queue.add(gid);
 		}
 	}
 }

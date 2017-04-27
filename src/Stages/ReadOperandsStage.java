@@ -17,35 +17,28 @@ public class ReadOperandsStage {
 	
 	public static void execute() throws Exception {
 		if(gid_queue.size() != 0){
-			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
+//			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
 
-			int id = OutputManager.read(gid_queue.peek(), 0);
-			Instruction inst = MIPS.instructions.get(id);
-			
-			if(canReadOperands(inst)){
-				int gid = gid_queue.remove();
-				System.out.println("Read- " + gid + " - " + inst.toString());
-				IssueUnit.i.setBusy(false);
-				ReadOperandUnit.i.setBusy(true);
-				inst.markDestinationRegisterStatus();
+				int gid = gid_queue.peek();
+				int id = OutputManager.read(gid, 0);
+				Instruction inst = MIPS.instructions.get(id);
 				
-				ReadOperandUnit.i.execute(inst);
+				if(canReadOperands(inst, gid)){
+					gid = gid_queue.remove();
+					System.out.println("Read- " + gid + " - " + inst.toString());
+					inst.markDestinationRegisterStatus();
 
-				OutputManager.write(gid, 3, MIPS.cycle);
-				ExecuteStage.gid_queue.add(gid);				
-			}
+					ReadOperandUnit.i.execute(inst, gid);
+
+					OutputManager.write(gid, 3, MIPS.cycle);
+				}
 		}
 	}
 
-	private static boolean canReadOperands(Instruction inst) throws Exception {
-//		if(ReadOperandUnit.i.isBusy()){
-//			MIPS.print("ReadOperandUnit.i.isBusy: " + inst.toString());
-//			return false;
-//		}
-		
+	private static boolean canReadOperands(Instruction inst, int gid) throws Exception {
 		if(inst.areSourcesBeingWritten()){ // check RAW hazards
 			MIPS.print("RAW hazard(SourcesBeingWritten):" + inst.toString());
-			OutputManager.write_silent(gid_queue.peek(), 6, 1);
+			OutputManager.write_silent(gid, 6, 1);
 			return false;
 		}
 
