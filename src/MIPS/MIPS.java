@@ -13,7 +13,6 @@ public class MIPS {
 	public static HashMap<String, Integer> label_map = new HashMap<String, Integer>();	
 
 	public static boolean halt = false;
-	public static int halt_count = 0;
 	public static int post_halt_count = 0;
 	public static int cycle = 1;
 	public static int MAX_CYCLES = 200;
@@ -49,12 +48,8 @@ public class MIPS {
 	}
 	
 	public static void halt_machine(){
-		halt_count++;
-		if(halt_count==2){
-			halt = true;
-			FetchStage.setId(-1);
-			MIPS.print("halt_machine");
-		}
+		halt = true;
+		MIPS.print("Halt Machine !!!");
 	}
 	
 	public static void print(String msg){
