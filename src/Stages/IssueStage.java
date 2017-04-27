@@ -1,5 +1,8 @@
 package Stages;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
@@ -11,50 +14,47 @@ import Managers.OutputManager;
 // If an instruction is stalled at this stage, no other instructions can proceed
 
 public class IssueStage {
-	public static int prev_inst_index = -1;
-	public static int curr_inst_index = -1;
-	public static int output_index = -1;
+	public static Queue<Integer> gid_queue = new LinkedList<Integer>();
 
 	public static void execute() throws Exception {
-		if(FetchStage.prev_inst_index != -1){
-			Instruction inst = MIPS.instructions.get(FetchStage.prev_inst_index);
+		if(gid_queue.size() != 0){
+			if(gid_queue.peek() == -1){
+				gid_queue.remove();
+				return;
+			}
+			int id = OutputManager.read(gid_queue.peek(), 0);
+			Instruction inst = MIPS.instructions.get(id);
 			
 			if(canIssue(inst)){
-				curr_inst_index = FetchStage.prev_inst_index;
-				System.out.println("Issue- " + curr_inst_index + " - " + inst.toString());
+				int gid = gid_queue.remove();
+				System.out.println("Issue: " + gid + " - " + inst.toString());
 				FetchUnit.i.setBusy(false);
 				IssueUnit.i.setBusy(true);
-				inst.markRegisterStatus();
+				inst.markDestinationRegisterStatus();
 
-				OutputManager.output_table.get(output_index)[2] = MIPS.cycle;
-				ReadOperandsStage.output_index = output_index;
+				IssueUnit.i.execute(inst, gid);					
+				ExecutionUnit.allocate_unit(inst, id, gid);
 
-				prev_inst_index = curr_inst_index;
-				curr_inst_index++;
-				IssueUnit.i.execute(inst);					
-				ExecutionUnit.allocate_unit(inst, curr_inst_index, output_index);
-			}else{
-				// initiate stall
-				prev_inst_index = -1;
+				OutputManager.write(gid, 2, MIPS.cycle);				
 			}		
-		}else{
-			// relay stall ahead
-			prev_inst_index = -1;
 		}
 	}
 
 	private static boolean canIssue(Instruction inst) throws Exception {
-		if(IssueUnit.i.isBusy()) return false;
+		if(IssueUnit.i.isBusy()){
+			MIPS.print("IssueUnit.i.isBusy: " + inst.toString());
+			return false;
+		}
 		
 		if(!ExecutionUnit.isUnitAvailable(inst)){  // check structural hazards
-			MIPS.print("Structural Hazard");
-			OutputManager.output_table.get(output_index)[8] = 1;
+			MIPS.print("Structural Hazard: " + inst.toString());
+			OutputManager.write_silent(gid_queue.peek(), 8, 1);
 			return false;
 		}
 		
 		if(inst.isDestinationBeingWritten()){ // check WAW hazards
-			MIPS.print("WAW Hazard");
-			OutputManager.output_table.get(output_index)[7] = 1;
+			MIPS.print("WAW Hazard(DestinationBeingWritten): " + inst.toString());
+			OutputManager.write_silent(gid_queue.peek(), 7, 1);
 			return false;
 		}
 		

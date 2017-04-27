@@ -16,7 +16,6 @@ public class MemoryOperand extends Operand {
 
 			if(RegisterOperand.isValidRegister(base)){
 				this.base_register = new RegisterOperand(base);
-				this.base_address = this.base_register.index;
 			}else{
 				this.base_address = Integer.parseInt(base);				
 			}			
@@ -25,8 +24,16 @@ public class MemoryOperand extends Operand {
 		}
 	}
 
-	public int final_address() {
-		return this.base_address + this.offset_address;
+	public int final_address() throws Exception {
+		if(this.base_register != null){
+			return (int)this.base_register.getValue() + this.offset_address;			
+		}else{
+			return this.base_address + this.offset_address;			
+		}
 	}
 	
+	@Override
+	public String toString() {
+		return offset_address + "(" + base_register + ")";
+	}
 }

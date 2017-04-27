@@ -2,6 +2,8 @@ package Instructions;
 
 import java.util.ArrayList;
 
+import Instructions.Operands.ImmediateOperand;
+import Instructions.Operands.MemoryOperand;
 import Instructions.Operands.RegisterOperand;
 
 public class BEQ extends Instruction{
@@ -36,5 +38,23 @@ public class BEQ extends Instruction{
 		source_registers.add(this.register_operand1);
 		source_registers.add(this.register_operand2);
 		return source_registers;
+	}
+
+	@Override
+	public void write() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public MemoryOperand getMemoryOperand() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ImmediateOperand getImmediateOperand() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -13,15 +13,13 @@ public class ReadOperandUnit extends FunctionalUnit {
 
 	public void execute(Instruction inst) throws Exception {
 		if((inst instanceof BEQ) && ((BEQ)inst).isConditionSatisfied()){
-			IssueStage.curr_inst_index = -1;
-			int goto_index = MIPS.label_map.get(((BEQ) inst).label);
-			FetchStage.curr_inst_index = goto_index;
-			ReadOperandsStage.prev_inst_index = ReadOperandsStage.curr_inst_index = -1;
+			FetchStage.id = MIPS.label_map.get(((BNE) inst).label);
+			IssueStage.gid_queue.add(-1);
+			ReadOperandsStage.gid_queue.add(-1);
 		}else if((inst instanceof BNE) && ((BNE)inst).isConditionSatisfied()){
-			IssueStage.curr_inst_index = -1;
-			int goto_index = MIPS.label_map.get(((BNE) inst).label);
-			FetchStage.curr_inst_index = goto_index;
-			ReadOperandsStage.prev_inst_index = ReadOperandsStage.curr_inst_index = -1;
+			FetchStage.id = MIPS.label_map.get(((BNE) inst).label);
+			IssueStage.gid_queue.add(-1);
+			ReadOperandsStage.gid_queue.add(-1);
 		}
 	}
 }

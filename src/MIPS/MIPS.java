@@ -15,7 +15,7 @@ public class MIPS {
 	public static boolean halt = false;
 	public static int halt_count = 0;
 	public static int cycle = 1;
-	public static int MAX_CYCLES = 50;
+	public static int MAX_CYCLES = 200;
 
 	public static void main(String[] args) throws Exception {
 		InstructionParser.parse(args[0]);
@@ -49,10 +49,10 @@ public class MIPS {
 	
 	public static void halt_machine(){
 		halt = true;
-		FetchStage.curr_inst_index = -1;		
+		FetchStage.id = -1;		
 	}
 	
 	public static void print(String msg){
-		System.out.println((char)27 + "[43m" + msg + (char)27 + "[0m");
+		System.out.println((char)27 + "[1m" + msg + (char)27 + "[0m");
 	}
 }

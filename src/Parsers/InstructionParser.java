@@ -34,7 +34,7 @@ public class InstructionParser {
 		String label = null;
 		if(line.contains(":")){
 			String[] l = line.split(":");
-			label = l[0];			
+			label = l[0].toUpperCase();			
 			line = l[1];
 		}
 		String[] tokens = line.trim().split("[\\s]", 2);
@@ -44,16 +44,14 @@ public class InstructionParser {
 			operands = tokens[1].replaceAll("\\s+", "").trim().split(",");				
 		}
 		
-		Instruction inst = createInstruction(opcode, operands);
+		Instruction inst = createInstruction(label, opcode, operands);
 		
 		MIPS.instructions.put(count, inst);
-		if(label != null){
-			MIPS.label_map.put(label, count);			
-		}
+		if(label != null) MIPS.label_map.put(label, count);
 	}
 
 	//	http://www.mrc.uidaho.edu/mrc/people/jff/digital/MIPSir.html
-	private static Instruction createInstruction(String opcode, String[] operands) throws Exception {
+	private static Instruction createInstruction(String label, String opcode, String[] operands) throws Exception {
 		Instruction inst = null;
 		ImmediateOperand immediate_operand = null;
 		MemoryOperand memory_operand = null;
@@ -181,6 +179,7 @@ public class InstructionParser {
 		default:
 			throw new Error("Invalid Opcode !");
 		}
+		inst.label = label;
 		
 		return inst;
 	}

@@ -6,7 +6,7 @@ import Instructions.Operands.*;
 import Managers.MemoryManager;
 import Managers.RegisterManager;
 
-public class LD extends Instruction implements Memorable{
+public class LD extends Instruction{
 	RegisterOperand register_operand;
 	MemoryOperand memory_operand;
 	
@@ -36,6 +36,17 @@ public class LD extends Instruction implements Memorable{
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
 		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
 		return source_registers;
+	}
+
+	@Override
+	public MemoryOperand getMemoryOperand() throws Exception {
+		return this.memory_operand;
+	}
+
+	@Override
+	public ImmediateOperand getImmediateOperand() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

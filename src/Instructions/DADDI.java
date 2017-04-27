@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Instructions.Operands.*;
 import Managers.RegisterManager;
 
-public class DADDI extends Instruction implements Executable{
+public class DADDI extends Instruction{
 	RegisterOperand register_operand1;
 	RegisterOperand register_operand2;
 	ImmediateOperand immediate_operand;
@@ -33,6 +33,24 @@ public class DADDI extends Instruction implements Executable{
 		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
 		source_registers.add(this.register_operand2);
 		return source_registers;
+	}
+
+	@Override
+	public void write() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public MemoryOperand getMemoryOperand() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ImmediateOperand getImmediateOperand() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

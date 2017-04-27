@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Instructions.Operands.*;
 import Managers.RegisterManager;
 
-public class LI extends Instruction implements Memorable{
+public class LI extends Instruction{
 	RegisterOperand register_operand;
 	ImmediateOperand immediate_operand;
 	
@@ -17,7 +17,6 @@ public class LI extends Instruction implements Memorable{
 	@Override
 	public void write() throws Exception {
 		register_operand.setValue(immediate_operand.value);
-		RegisterManager.write(register_operand, immediate_operand.value);
 	}
 
 	@Override
@@ -34,6 +33,17 @@ public class LI extends Instruction implements Memorable{
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
 		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
 		return source_registers;
+	}
+
+	@Override
+	public MemoryOperand getMemoryOperand() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ImmediateOperand getImmediateOperand() throws Exception {
+		return this.immediate_operand;
 	}
 
 }

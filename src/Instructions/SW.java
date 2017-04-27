@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import Instructions.Operands.*;
 import Managers.MemoryManager;
 
-public class SW extends Instruction implements Executable, Memorable{
+public class SW extends Instruction{
 	RegisterOperand register_operand;
 	MemoryOperand memory_operand;
 	
@@ -34,6 +34,17 @@ public class SW extends Instruction implements Executable, Memorable{
 		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
 		source_registers.add(this.register_operand);
 		return source_registers;
+	}
+
+	@Override
+	public MemoryOperand getMemoryOperand() throws Exception {
+		return this.memory_operand;
+	}
+
+	@Override
+	public ImmediateOperand getImmediateOperand() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

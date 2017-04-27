@@ -7,4 +7,9 @@ public class ImmediateOperand extends Operand{
 		super();
 		this.value = Float.parseFloat(raw_value);
 	}
+	
+	@Override
+	public String toString() {
+		return Double.toString(value);
+	}
 }

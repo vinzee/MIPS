@@ -20,17 +20,20 @@ public class RegisterOperand extends Operand {
 	public double getValue() throws Exception {	
 		return RegisterManager.read(this);
 	}
-	public double setValue(double value) throws Exception {	
-		return RegisterManager.write(this, value);
+	public void setValue(double value) throws Exception {	
+		RegisterManager.write(this, value);
 	}
 	public boolean isBeingRead() throws Exception {	
-		return RegisterManager.getStatus(this) == "read";
+		return RegisterManager.getReadStatus(this);
 	}	
 	public boolean isBeingWritten() throws Exception {	
-		return RegisterManager.getStatus(this) == "write";
+		return RegisterManager.getWriteStatus(this);
 	}	
-	public void setStatus(String value) throws Exception {	
-		RegisterManager.setStatus(this, value);
+	public void setReadStatus(boolean value) throws Exception {	
+		RegisterManager.setReadStatus(this, value);
+	}	
+	public void setWriteStatus(boolean value) throws Exception {	
+		RegisterManager.setWriteStatus(this, value);
 	}	
 	
 	private static int getIndex(String register_name) throws Exception {	
@@ -50,4 +53,10 @@ public class RegisterOperand extends Operand {
 			return false;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return (floating_point == true ? "F" : "R") + "" + index;
+	}
+
 }

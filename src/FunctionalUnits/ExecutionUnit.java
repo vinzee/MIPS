@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import Instructions.Instruction;
-import MIPS.MIPS;
-import Managers.OutputManager;
-import Stages.*;
 
 public class ExecutionUnit {
 	HashMap<FunctionalUnit, Integer> status = new HashMap<FunctionalUnit, Integer>();
@@ -19,10 +16,9 @@ public class ExecutionUnit {
 	public static ArrayList<FpMultiplierUnit> fp_multiplier_unit_pool = new ArrayList<FpMultiplierUnit>();
 	public static HashMap<Integer, FunctionalUnitData> busy_units = new HashMap<Integer, FunctionalUnitData>();
 
-	public static Instruction execute_busy_units() throws Exception{
+	public static FunctionalUnitData execute_busy_units() throws Exception{
 		Iterator<Entry<Integer, FunctionalUnitData>> itr = busy_units.entrySet().iterator();
 		boolean passed_to_next_stage = false;
-		Instruction inst = null;
 		
 		while (itr.hasNext()) {
 	        Map.Entry<Integer, FunctionalUnitData> pair = (Map.Entry<Integer, FunctionalUnitData>)itr.next();
@@ -30,21 +26,18 @@ public class ExecutionUnit {
 	        
 	        if(fud.is_executing){ // marked to run	        			        
 	            if(fud.remaining_latency != 0){
-			        System.out.println("------execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
+			        System.out.println("FU execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
 		        	fud.remaining_latency -= 1;
-		        	busy_units.put(fud.output_index, fud);
+		        	busy_units.put(fud.id, fud);
 		        }
-	            if(fud.remaining_latency == 0 && !passed_to_next_stage){
-		        	passed_to_next_stage = true;
-		        	// TODO - move this to execute stage
-		        	OutputManager.output_table.get(fud.output_index)[4] = MIPS.cycle;
-		        	ExecuteStage.prev_inst_index = fud.inst_index;
-					WriteStage.output_index = fud.output_index;
+	            if(fud.remaining_latency == 0){
+	            	if(passed_to_next_stage) throw new Error("Passing multiple instructions to WriteStage at same time");
+	            	passed_to_next_stage = true;
+		        	return fud;
 		        }
 		    }
 		}
-		
-		return inst;
+		return null;		
 	}
 
 	public static boolean isUnitAvailable(Instruction inst) throws Exception{
@@ -68,23 +61,23 @@ public class ExecutionUnit {
 		}
 	}
 
-	public static void run_unit(int inst_index) {
-//		System.out.println("run_unit");
-		FunctionalUnitData fud = busy_units.get(inst_index);
+	public static void run_unit(int gid) {
+		System.out.println("FU run_unit: " + gid);
+		FunctionalUnitData fud = busy_units.get(gid);
 		fud.is_executing = true;
-		busy_units.put(inst_index, fud);
+		busy_units.put(gid, fud);
 	}
-	public static void stop_unit(int inst_index) {
-//		System.out.println("stop_unit");
-		FunctionalUnitData fud = busy_units.get(inst_index);
+	public static void stop_unit(int gid) {
+		FunctionalUnitData fud = busy_units.get(gid);
+		System.out.println("stop_unit: " + gid);
 		fud.is_executing = false;
-		busy_units.put(inst_index, fud);
+		busy_units.put(gid, fud);
 	}
 	
-	public static void allocate_unit(Instruction inst, int inst_index, int output_index) throws Exception{
+	public static void allocate_unit(Instruction inst, int id, int gid) throws Exception{
 		String type_of_unit = get_type_of_unit(inst);
 		FunctionalUnit unit = null;
-		System.out.println("------allocate " + type_of_unit + " - " + output_index);
+		System.out.println("FU allocate " + type_of_unit + " - " + id);
 		
 		switch(type_of_unit){
 			case "NoUnit":
@@ -106,24 +99,23 @@ public class ExecutionUnit {
 				break;
 		}
 		unit.setBusy(true);
-		FunctionalUnitData fud = new FunctionalUnitData(inst_index, unit, unit.latency, output_index);
-		busy_units.put(output_index, fud);
-
-		debug();
+		FunctionalUnitData fud = new FunctionalUnitData(id, gid, unit, unit.latency);
+		busy_units.put(gid, fud);
 	}
 
-	public static void deallocate_unit(FunctionalUnit unit) throws Exception{
-    	System.out.println("------deallocate " + unit.getClass().getSimpleName());
+	public static void deallocate_unit(FunctionalUnitData fud) throws Exception{
+    	System.out.println("FU deallocate: " + fud.unit.getClass().getSimpleName() + " , " + fud.id);
  
-    	unit.setBusy(false);
-    	if(unit instanceof FpAdderUnit){
-    		fp_adder_unit_pool.add((FpAdderUnit) unit);
-    	}else if(unit instanceof FpDividerUnit){
-    		fp_divider_unit_pool.add((FpDividerUnit) unit);		        		
-    	}else if(unit instanceof FpMultiplierUnit){
-    		fp_multiplier_unit_pool.add((FpMultiplierUnit) unit);		        		
+    	fud.unit.setBusy(false);
+    	if(fud.unit instanceof FpAdderUnit){
+    		fp_adder_unit_pool.add((FpAdderUnit) fud.unit);
+    	}else if(fud.unit instanceof FpDividerUnit){
+    		fp_divider_unit_pool.add((FpDividerUnit) fud.unit);		        		
+    	}else if(fud.unit instanceof FpMultiplierUnit){
+    		fp_multiplier_unit_pool.add((FpMultiplierUnit) fud.unit);		        		
     	}
-		debug();
+
+    	ExecutionUnit.busy_units.remove(fud.gid);
 	}
 	
 	private static String get_type_of_unit(Instruction inst) {
@@ -131,11 +123,10 @@ public class ExecutionUnit {
 		String type_of_unit = null;
 		
 		switch(inst_class){
-		case "SW": 
+		case "LW": 
 		case "LD": 
+		case "SW": 
 		case "SD": 
-		case "LI": 
-		case "LUI": 
 			type_of_unit = "LoadUnit";
 			break;
 		case "AND": 
@@ -146,6 +137,8 @@ public class ExecutionUnit {
 		case "DADDI": 
 		case "DSUB": 
 		case "DSUBI": 
+		case "LI": 
+		case "LUI": 
 			type_of_unit = "IntegerUnit";
 			break;
 		case "ADDD": 

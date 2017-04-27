@@ -3,43 +3,34 @@ package Stages;
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
+import Managers.OutputManager;
 
 // Execution — operate on operands (EX)
 // Actions: The functional unit begins execution upon receiving operands.
 //          When the result is ready, it notifies the scoreboard that it has completed execution.
 
 public class ExecuteStage {
-	public static int prev_inst_index = -1;
-	public static int curr_inst_index = -1;		
-	public static int output_index = -1;
-
 	public static void execute() throws Exception {
-		if(ReadOperandsStage.prev_inst_index != -1){
-			Instruction inst = MIPS.instructions.get(ReadOperandsStage.prev_inst_index);
+		if(ReadOperandsStage.prev_gid != -1){
+			int id = OutputManager.read(ReadOperandsStage.prev_gid, 0);
+			Instruction inst = MIPS.instructions.get(id);
 			
 			if(canExecute(inst)){
-				System.out.println("Execute- " + ReadOperandsStage.prev_inst_index + " - " + inst.toString());
-				curr_inst_index = ReadOperandsStage.prev_inst_index;
+				int gid = ReadOperandsStage.prev_gid;
+				System.out.println("Execute- " + gid + " - " + inst.toString());
 				ReadOperandUnit.i.setBusy(false);
 
-				ExecutionUnit.run_unit(curr_inst_index);
-	    		
-				prev_inst_index = curr_inst_index;
-				curr_inst_index++;
-			}else{
-				// initiate stall
-				prev_inst_index = -1;
-				System.out.println("No execution unit found");
+				inst.markSourceRegisterStatus();
+				ExecutionUnit.run_unit(gid);	    		
 			}
-		}else{
-			// relay stall ahead
-			prev_inst_index = -1;
 		}
 		
-		Instruction inst_finished_execution = ExecutionUnit.execute_busy_units();
-
-		if(inst_finished_execution != null){
+		FunctionalUnitData fud = ExecutionUnit.execute_busy_units();
+		if(fud != null){
+			Instruction inst_finished_execution = MIPS.instructions.get(fud.id);
 			inst_finished_execution.execute();
+        	OutputManager.write(fud.gid, 4, MIPS.cycle);
+        	WriteStage.gid_queue.add(fud.gid);     	
 		}
 	}
 

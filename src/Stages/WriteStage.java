@@ -1,59 +1,58 @@
 package Stages;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
 import Managers.OutputManager;
 
-
 public class WriteStage {
-//	public static int prev_inst_index = -1;
-	public static int curr_inst_index = -1;		
-	public static int output_index = -1;
-	public static int previous_output_index = -1;
-
+	public static Queue<Integer> gid_queue = new LinkedList<Integer>();
+	public static int prev_gid = -1;
+	
 	public static void execute() throws Exception {
-		if(previous_output_index != -1){
-			FunctionalUnitData prev_fud = ExecutionUnit.busy_units.get(previous_output_index);
+		if(prev_gid != -1){
+			FunctionalUnitData prev_fud = ExecutionUnit.busy_units.get(prev_gid);
 			if(prev_fud != null){
-				ExecutionUnit.deallocate_unit(prev_fud.unit);	        	
-				ExecutionUnit.busy_units.remove(previous_output_index);						
+				ExecutionUnit.deallocate_unit(prev_fud);
+				Instruction prev_inst = MIPS.instructions.get(prev_fud.id);
+				prev_inst.unMarkRegisterStatus();
 			}
 		}
 
-		if(ExecuteStage.prev_inst_index != -1){
-			Instruction inst = MIPS.instructions.get(ExecuteStage.prev_inst_index);
+		if(gid_queue.size() != 0){
+			if(gid_queue.peek() == -1){
+				gid_queue.remove();
+				prev_gid = -1;			
+				return;
+			}
+			int id = OutputManager.read(gid_queue.peek(), 0);
+			Instruction inst = MIPS.instructions.get(id);
 			
 			if(canWrite(inst)){
-				curr_inst_index = ExecuteStage.prev_inst_index;
-				System.out.println("Write- " + ExecuteStage.prev_inst_index + " - " + inst.toString());
-//				ExecuteUnit.i.setBusy(false);
-//				WriteUnit.i.setBusy(true);
-
+				int gid = gid_queue.remove();
+				System.out.println("Write: " + gid + " - " + inst.toString());
 				WriteUnit.i.execute(inst);
-				OutputManager.output_table.get(output_index)[5] = MIPS.cycle;
 				
-				ExecutionUnit.stop_unit(output_index);
-				
-				previous_output_index = output_index;
-				
-				inst.unMarkRegisterStatus();
-				
-//				prev_inst_index = curr_inst_index;
-				curr_inst_index++;
-			}		
+				ExecutionUnit.stop_unit(gid);
+				OutputManager.write(gid, 5, MIPS.cycle);
+				prev_gid = gid;
+			}else{
+				prev_gid = -1;
+			}
+		}else{
+			prev_gid = -1;			
 		}
-//		else{
-//			prev_inst_index = -1;
-//		}
 	}
 
 	private static boolean canWrite(Instruction inst) throws Exception {
-		if(WriteUnit.i.isBusy()) return false;
+//		if(WriteUnit.i.isBusy()) return false;
 		
-		if(inst.isDestinationBeingWritten()){ // check WAR hazards
-			System.out.println("WAR hazard");
-			OutputManager.output_table.get(output_index)[9] = 1;
+		if(inst.isDestinationBeingRead()){ // check WAR hazards
+			System.out.println("WAR hazard(DestinationBeingRead): " + inst.toString());
+			OutputManager.write_silent(gid_queue.peek(), 9, 1);
 			return false;
 		}
 		
