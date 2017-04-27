@@ -13,9 +13,9 @@ public class RegisterManager {
 	static double[] integer_registers = new double[32];
 	static double[] floating_point_registers = new double[32];
 
-	static boolean[] integer_register_reading = new boolean[32];
+//	static boolean[] integer_register_reading = new boolean[32];
 	static boolean[] integer_register_writing = new boolean[32];
-	static boolean[] floating_point_register_reading = new boolean[32];
+//	static boolean[] floating_point_register_reading = new boolean[32];
 	static boolean[] floating_point_register_writing = new boolean[32];
 
 	public static boolean getWriteStatus(RegisterOperand register_operand) throws Exception {
@@ -25,12 +25,12 @@ public class RegisterManager {
 			return floating_point_register_writing[register_operand.index-1];
 	}
 
-	public static boolean getReadStatus(RegisterOperand register_operand) throws Exception {
-		if(register_operand.floating_point)
-			return integer_register_reading[register_operand.index-1];
-		else
-			return floating_point_register_reading[register_operand.index-1];			
-	}
+//	public static boolean getReadStatus(RegisterOperand register_operand) throws Exception {
+//		if(register_operand.floating_point)
+//			return integer_register_reading[register_operand.index-1];
+//		else
+//			return floating_point_register_reading[register_operand.index-1];			
+//	}
 
 	public static void setWriteStatus(RegisterOperand register_operand, boolean value) throws Exception {
 		if(register_operand.floating_point)
@@ -39,12 +39,12 @@ public class RegisterManager {
 			floating_point_register_writing[register_operand.index-1] = value;
 	}
 
-	public static void setReadStatus(RegisterOperand register_operand, boolean value) throws Exception {
-		if(register_operand.floating_point)
-			integer_register_reading[register_operand.index-1] = value;
-		else
-			floating_point_register_reading[register_operand.index-1] = value;			
-	}
+//	public static void setReadStatus(RegisterOperand register_operand, boolean value) throws Exception {
+//		if(register_operand.floating_point)
+//			integer_register_reading[register_operand.index-1] = value;
+//		else
+//			floating_point_register_reading[register_operand.index-1] = value;			
+//	}
 
 	public static double read(RegisterOperand register_operand) throws Exception {
 		if(register_operand.floating_point){

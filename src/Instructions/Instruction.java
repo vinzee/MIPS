@@ -41,25 +41,25 @@ public abstract class Instruction {
 		if(this.getDestinationRegister() != null) this.getDestinationRegister().setWriteStatus(true);
 	}
 	
-	public void markSourceRegisterStatus() throws Exception{
-		for (RegisterOperand source_operand: this.getSourceRegisters())
-			source_operand.setReadStatus(true);
-	}
+//	public void markSourceRegisterStatus() throws Exception{
+//		for (RegisterOperand source_operand: this.getSourceRegisters())
+//			source_operand.setReadStatus(true);
+//	}
 
 	public void unMarkRegisterStatus() throws Exception{
 		RegisterOperand destination_operand = this.getDestinationRegister();
 		if(destination_operand != null) destination_operand.setWriteStatus(false);
 
-		for (RegisterOperand source_operand: this.getSourceRegisters()) {
-			source_operand.setReadStatus(false);
-		}
+//		for (RegisterOperand source_operand: this.getSourceRegisters()) {
+//			source_operand.setReadStatus(false);
+//		}
 	};
 
-	public boolean isDestinationBeingRead() throws Exception{
-		RegisterOperand destination_operand = this.getDestinationRegister();
-		if(destination_operand != null) return destination_operand.isBeingRead();
-		return false;
-	};
+//	public boolean isDestinationBeingRead() throws Exception{
+//		RegisterOperand destination_operand = this.getDestinationRegister();
+//		if(destination_operand != null) return destination_operand.isBeingRead();
+//		return false;
+//	};
 
 	public boolean isDestinationBeingWritten() throws Exception{
 		RegisterOperand destination_operand = this.getDestinationRegister();

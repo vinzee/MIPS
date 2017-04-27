@@ -23,15 +23,15 @@ public class RegisterOperand extends Operand {
 	public void setValue(double value) throws Exception {	
 		RegisterManager.write(this, value);
 	}
-	public boolean isBeingRead() throws Exception {	
-		return RegisterManager.getReadStatus(this);
-	}	
+//	public boolean isBeingRead() throws Exception {	
+//		return RegisterManager.getReadStatus(this);
+//	}	
 	public boolean isBeingWritten() throws Exception {	
 		return RegisterManager.getWriteStatus(this);
 	}	
-	public void setReadStatus(boolean value) throws Exception {	
-		RegisterManager.setReadStatus(this, value);
-	}	
+//	public void setReadStatus(boolean value) throws Exception {	
+//		RegisterManager.setReadStatus(this, value);
+//	}	
 	public void setWriteStatus(boolean value) throws Exception {	
 		RegisterManager.setWriteStatus(this, value);
 	}	

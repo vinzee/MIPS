@@ -15,7 +15,7 @@ public class MIPS {
 	public static boolean halt = false;
 	public static int halt_count = 0;
 	public static int cycle = 1;
-	public static int MAX_CYCLES = 200;
+	public static int MAX_CYCLES = 50;
 
 	public static void main(String[] args) throws Exception {
 		InstructionParser.parse(args[0]);

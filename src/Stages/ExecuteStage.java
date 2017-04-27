@@ -1,5 +1,8 @@
 package Stages;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
@@ -10,18 +13,22 @@ import Managers.OutputManager;
 //          When the result is ready, it notifies the scoreboard that it has completed execution.
 
 public class ExecuteStage {
+	public static Queue<Integer> gid_queue = new LinkedList<Integer>();
+
 	public static void execute() throws Exception {
-		if(ReadOperandsStage.prev_gid != -1){
-			int id = OutputManager.read(ReadOperandsStage.prev_gid, 0);
+		if(gid_queue.size() != 0){
+			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
+			
+			int id = OutputManager.read(gid_queue.peek(), 0);
 			Instruction inst = MIPS.instructions.get(id);
 			
 			if(canExecute(inst)){
-				int gid = ReadOperandsStage.prev_gid;
+				int gid = gid_queue.remove();
 				System.out.println("Execute- " + gid + " - " + inst.toString());
 				ReadOperandUnit.i.setBusy(false);
 
-				inst.markSourceRegisterStatus();
-				ExecutionUnit.run_unit(gid);	    		
+//				inst.markSourceRegisterStatus();
+				ExecutionUnit.run_unit(gid);
 			}
 		}
 		
@@ -34,8 +41,8 @@ public class ExecuteStage {
 		}
 	}
 
+	// already checked for availability of execution unit in issue
 	private static boolean canExecute(Instruction inst) throws Exception {
-		// already checked for availability of execution unit in issue
 		return true;
 	}
 }

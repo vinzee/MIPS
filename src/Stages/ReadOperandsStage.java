@@ -13,16 +13,12 @@ import Managers.OutputManager;
 // Actions: the function unit reads register operands and start execution the next cycle
 
 public class ReadOperandsStage {
-	public static int prev_gid = -1;
-//	public static int gid = -1;
 	public static Queue<Integer> gid_queue = new LinkedList<Integer>();
 	
 	public static void execute() throws Exception {
 		if(gid_queue.size() != 0){
-			if(gid_queue.peek() == -1){
-				gid_queue.remove();
-				return;
-			}
+			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
+
 			int id = OutputManager.read(gid_queue.peek(), 0);
 			Instruction inst = MIPS.instructions.get(id);
 			
@@ -31,26 +27,21 @@ public class ReadOperandsStage {
 				System.out.println("Read- " + gid + " - " + inst.toString());
 				IssueUnit.i.setBusy(false);
 				ReadOperandUnit.i.setBusy(true);
+				inst.markDestinationRegisterStatus();
 				
 				ReadOperandUnit.i.execute(inst);
 
 				OutputManager.write(gid, 3, MIPS.cycle);
-				prev_gid = gid;				
-			}else{
-				// initiate stall
-				prev_gid = -1;
+				ExecuteStage.gid_queue.add(gid);				
 			}
-		}else{
-			// relay stall ahead
-			prev_gid = -1;
 		}
 	}
 
 	private static boolean canReadOperands(Instruction inst) throws Exception {
-		if(ReadOperandUnit.i.isBusy()){
-			MIPS.print("ReadOperandUnit.i.isBusy: " + inst.toString());
-			return false;
-		}
+//		if(ReadOperandUnit.i.isBusy()){
+//			MIPS.print("ReadOperandUnit.i.isBusy: " + inst.toString());
+//			return false;
+//		}
 		
 		if(inst.areSourcesBeingWritten()){ // check RAW hazards
 			MIPS.print("RAW hazard(SourcesBeingWritten):" + inst.toString());
