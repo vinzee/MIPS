@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import FunctionalUnits.FetchUnit;
 import Instructions.Instruction;
 import MIPS.MIPS;
-import Managers.OutputManager;
+import Managers.*;
 
 // latency of 1;
 public class FetchStage {	
@@ -16,18 +16,21 @@ public class FetchStage {
 		if(canFetch() && id != -1){
 			Instruction inst = MIPS.instructions.get(id);
 			if(inst == null) throw new Error("Invalid instruction index: " + id);
-				
-			System.out.println("Fetch- " + id + " - " + inst.toString());
 			
-			int gid = OutputManager.add();
-			FetchUnit.i.execute(inst, gid);
+			if(ICacheManager.is_available(id)){
+				System.out.println("Fetch- " + id + " - " + inst.toString());
 
-			OutputManager.write(gid, 0, id);
-			OutputManager.write(gid,1, MIPS.cycle);
+				int gid = OutputManager.add();
+				FetchUnit.i.execute(inst, gid);
 
-			id = MIPS.halt ? -1 : id+1;
+				OutputManager.write(gid, 0, id);
+				OutputManager.write(gid,1, MIPS.cycle);
+
+				id = MIPS.halt ? -1 : id+1;
+			}
 		}else{
 			if(id_queue.size() != 0) id = id_queue.remove(0);
+			if(id != -1) ICacheManager.is_available(id);
 		}
 	}
 	

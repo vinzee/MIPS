@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import FunctionalUnits.*;
+import Managers.ICacheManager;
 
 public class ConfigParser {
 	public static void parse(String filepath) throws Exception {
@@ -15,10 +16,8 @@ public class ConfigParser {
 				parseLine(line);
 			}
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}
@@ -48,7 +47,8 @@ public class ConfigParser {
 				}
 				break;
 			case "i-cache":
-				// TODO
+				ICacheManager.no_of_blocks = Integer.parseInt(m[0].trim());
+				ICacheManager.block_size = Integer.parseInt(m[1].trim());
 				break;
 			default:
 				throw new Exception("Unhandled config type - " + l[0]);

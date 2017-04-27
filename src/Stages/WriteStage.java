@@ -38,14 +38,4 @@ public class WriteStage {
 			prev_gid = -1;
 		}
 	}
-
-//	private static boolean canWrite(Instruction inst) throws Exception {
-		// TODO - Ask if this is to be checked
-//		if(inst.isDestinationBeingRead()){ // check WAR hazards
-//			System.out.println("WAR hazard(DestinationBeingRead): " + inst.toString());
-//			OutputManager.write_silent(gid_queue.peek(), 9, 1);
-//			return false;
-//		}ssss
-//		return true;
-//	}
 }

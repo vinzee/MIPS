@@ -22,6 +22,7 @@ public class MIPS {
 		MemoryParser.parse(args[1]);
 		ConfigParser.parse(args[2]);
 		OutputManager.init(args[3]);
+		ICacheManager.init();
 		
 		MIPS.execute_scoreboard();
 	}
