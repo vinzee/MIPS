@@ -28,8 +28,7 @@ public class ExecutionUnit {
 	            if(fud.remaining_latency != 0){
 			        System.out.println("FU execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
 		        	fud.remaining_latency -= 1;
-//		        	pair.setValue(fud); // concurrent hashmap update error
-		        	busy_units.put(fud.id, fud);
+		        	pair.setValue(fud);
 		        }
 	            if(fud.remaining_latency == 0){
 	            	if(passed_to_next_stage) throw new Error("Passing multiple instructions to WriteStage at same time");
@@ -63,14 +62,14 @@ public class ExecutionUnit {
 	}
 
 	public static void run_unit(int gid) {
-		System.out.println("FU run_unit: " + gid);
+//		System.out.println("FU run_unit: " + gid);
 		FunctionalUnitData fud = busy_units.get(gid);
 		fud.is_executing = true;
 		busy_units.put(gid, fud);
 	}
 	public static void stop_unit(int gid) {
 		FunctionalUnitData fud = busy_units.get(gid);
-		System.out.println("stop_unit: " + gid);
+//		System.out.println("stop_unit: " + gid);
 		fud.is_executing = false;
 		busy_units.put(gid, fud);
 	}
@@ -78,7 +77,7 @@ public class ExecutionUnit {
 	public static void allocate_unit(Instruction inst, int id, int gid) throws Exception{
 		String type_of_unit = get_type_of_unit(inst);
 		FunctionalUnit unit = null;
-		System.out.println("FU allocate " + type_of_unit + " - " + id);
+//		System.out.println("FU allocate " + type_of_unit + " - " + id);
 		
 		switch(type_of_unit){
 			case "NoUnit":
@@ -105,7 +104,7 @@ public class ExecutionUnit {
 	}
 
 	public static void deallocate_unit(FunctionalUnitData fud) throws Exception{
-    	System.out.println("FU deallocate: " + fud.unit.getClass().getSimpleName() + " , " + fud.id);
+//    	System.out.println("FU deallocate: " + fud.unit.getClass().getSimpleName() + " , " + fud.id);
  
     	fud.unit.setBusy(false);
     	if(fud.unit instanceof FpAdderUnit){

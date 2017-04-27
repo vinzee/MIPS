@@ -1,6 +1,7 @@
 package FunctionalUnits;
 
 import Instructions.Instruction;
+import Stages.IssueStage;
 
 public class FetchUnit extends FunctionalUnit {
 	public static final FetchUnit i = new FetchUnit(1);
@@ -9,8 +10,8 @@ public class FetchUnit extends FunctionalUnit {
 		super(latency);
 	}
 
-	public void execute(Instruction inst) {
-		// TODO Auto-generated method stub
-		
+	public void execute(Instruction inst, int gid) {
+		FetchUnit.i.setBusy(true);
+		IssueStage.gid_queue.add(gid);
 	}
 }

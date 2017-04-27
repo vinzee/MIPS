@@ -1,7 +1,6 @@
 package Stages;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 
 import FunctionalUnits.*;
 import Instructions.*;
@@ -14,38 +13,40 @@ import Managers.OutputManager;
 // If an instruction is stalled at this stage, no other instructions can proceed
 
 public class IssueStage {
-	public static Queue<Integer> gid_queue = new LinkedList<Integer>();
+	public static ArrayList<Integer> gid_queue = new ArrayList<Integer>();
 
 	public static void execute() throws Exception {
 		if(gid_queue.size() != 0){
-//			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
+			if(gid_queue.get(0) == -1){ gid_queue.remove(0); return; }
 
-			int id = OutputManager.read(gid_queue.peek(), 0);
+			int id = OutputManager.read(gid_queue.get(0), 0);
 			Instruction inst = MIPS.instructions.get(id);
 			
-			if(canIssue(inst)){
-				int gid = gid_queue.remove();
+			if(canIssue(inst, gid_queue.get(0))){
+				int gid = gid_queue.remove(0);
 				System.out.println("Issue: " + gid + " - " + inst.toString());
 				FetchUnit.i.setBusy(false);
 
-				IssueUnit.i.execute(inst, gid);					
-				ExecutionUnit.allocate_unit(inst, id, gid);
+				IssueUnit.i.execute(inst, gid, id);
 
-				OutputManager.write(gid, 2, MIPS.cycle);				
-			}		
+				OutputManager.write(gid, 2, MIPS.cycle);
+			}else{
+				// Till BEQ / BNE is issued stall pipeline until the condition is resolved.
+				if(inst instanceof BEQ || inst instanceof BNE) gid_queue.add(0, -1);
+			}
 		}
 	}
 
-	private static boolean canIssue(Instruction inst) throws Exception {
+	private static boolean canIssue(Instruction inst, int gid) throws Exception {
 		if(!ExecutionUnit.isUnitAvailable(inst)){  // check structural hazards
 			MIPS.print("Structural Hazard: " + inst.toString());
-			OutputManager.write_silent(gid_queue.peek(), 8, 1);
+			OutputManager.write_silent(gid, 8, 1);
 			return false;
 		}
 		
 		if(inst.isDestinationBeingWritten()){ // check WAW hazards
 			MIPS.print("WAW Hazard(DestinationBeingWritten): " + inst.toString());
-			OutputManager.write_silent(gid_queue.peek(), 7, 1);
+			OutputManager.write_silent(gid, 7, 1);
 			return false;
 		}
 		

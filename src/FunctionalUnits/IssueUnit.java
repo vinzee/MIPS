@@ -11,13 +11,14 @@ public class IssueUnit extends FunctionalUnit {
 		super(latency);
 	}
 
-	public void execute(Instruction inst, int gid) {
+	public void execute(Instruction inst, int gid, int id) throws Exception {
 		if(inst instanceof HLT){
 			MIPS.halt_machine();
 		}else if(inst instanceof J){
-			FetchStage.id = MIPS.label_map.get(((J) inst).label);
+			FetchStage.setId(MIPS.label_map.get(((J) inst).label));
 		}else{
 			ReadOperandsStage.gid_queue.add(gid);			
+			ExecutionUnit.allocate_unit(inst, id, gid);
 		}
 	}
 }

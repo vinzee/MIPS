@@ -1,7 +1,6 @@
 package Stages;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayList;
 
 import FunctionalUnits.*;
 import Instructions.*;
@@ -13,25 +12,28 @@ import Managers.OutputManager;
 // Actions: the function unit reads register operands and start execution the next cycle
 
 public class ReadOperandsStage {
-	public static Queue<Integer> gid_queue = new LinkedList<Integer>();
+	public static ArrayList<Integer> gid_queue = new ArrayList<Integer>();
 	
 	public static void execute() throws Exception {
 		if(gid_queue.size() != 0){
-//			if(gid_queue.peek() == -1){ gid_queue.remove(); return; }
+			if(gid_queue.get(0) == -1){ gid_queue.remove(0); return; }
 
-				int gid = gid_queue.peek();
-				int id = OutputManager.read(gid, 0);
-				Instruction inst = MIPS.instructions.get(id);
-				
-				if(canReadOperands(inst, gid)){
-					gid = gid_queue.remove();
-					System.out.println("Read- " + gid + " - " + inst.toString());
-					inst.markDestinationRegisterStatus();
+			int gid = gid_queue.get(0);
+			int id = OutputManager.read(gid, 0);
+			Instruction inst = MIPS.instructions.get(id);
 
-					ReadOperandUnit.i.execute(inst, gid);
+			if(canReadOperands(inst, gid)){
+				gid = gid_queue.remove(0);
+				System.out.println("Read- " + gid + " - " + inst.toString());
+				inst.markDestinationRegisterStatus();
 
-					OutputManager.write(gid, 3, MIPS.cycle);
-				}
+				ReadOperandUnit.i.execute(inst, gid);
+
+				OutputManager.write(gid, 3, MIPS.cycle);
+			}else{
+				// Till BEQ / BNE is issued stall pipeline until the condition is resolved.
+				if(inst instanceof BEQ || inst instanceof BNE) IssueStage.gid_queue.add(0, -1);
+			}
 		}
 	}
 

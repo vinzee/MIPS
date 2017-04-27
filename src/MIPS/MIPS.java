@@ -14,8 +14,9 @@ public class MIPS {
 
 	public static boolean halt = false;
 	public static int halt_count = 0;
+	public static int post_halt_count = 0;
 	public static int cycle = 1;
-	public static int MAX_CYCLES = 100;
+	public static int MAX_CYCLES = 200;
 
 	public static void main(String[] args) throws Exception {
 		InstructionParser.parse(args[0]);
@@ -36,7 +37,7 @@ public class MIPS {
 			FetchStage.execute();
 			OutputManager.printResults();
 
-			if(halt) halt_count++;
+			if(halt) post_halt_count++;
 			if(stop_machine()) break;
 
 			cycle++;
@@ -44,12 +45,16 @@ public class MIPS {
 	}
 	
 	public static boolean stop_machine(){
-		return halt && halt_count > 5;
+		return halt && post_halt_count > 5;
 	}
 	
 	public static void halt_machine(){
-		halt = true;
-		FetchStage.id = -1;		
+		halt_count++;
+		if(halt_count==2){
+			halt = true;
+			FetchStage.setId(-1);
+			MIPS.print("halt_machine");
+		}
 	}
 	
 	public static void print(String msg){

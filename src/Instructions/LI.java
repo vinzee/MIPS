@@ -3,7 +3,6 @@ package Instructions;
 import java.util.ArrayList;
 
 import Instructions.Operands.*;
-import Managers.RegisterManager;
 
 public class LI extends Instruction{
 	RegisterOperand register_operand;
