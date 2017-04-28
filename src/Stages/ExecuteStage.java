@@ -2,6 +2,8 @@ package Stages;
 
 import java.util.ArrayList;
 
+import Cache.DCacheManager;
+import Cache.ICacheManager;
 import FunctionalUnits.*;
 import Instructions.*;
 import MIPS.*;
@@ -18,19 +20,22 @@ public class ExecuteStage {
 		if(gid_queue.size() != 0){
 			if(gid_queue.get(0) == -1){ gid_queue.remove(0); return; }
 
-			int gid = gid_queue.remove(0);
+			int gid = gid_queue.get(0);
 			int id = OutputManager.read(gid, 0);
 			Instruction inst = MIPS.instructions.get(id);
 			
-			System.out.println("Execute- " + gid + " - " + inst.toString());
-
-			ExecutionUnit.run_unit(gid);
+			if(DCacheManager.is_available(gid, inst)){
+				gid = gid_queue.remove(0);
+				System.out.println("Execute- " + gid + " - " + inst.toString());
+				ExecutionUnit.run_unit(gid);
+			}
 		}
 		
 		FunctionalUnitData fud = ExecutionUnit.execute_busy_units();
 		if(fud != null){
 			Instruction inst_finished_execution = MIPS.instructions.get(fud.id);
 			inst_finished_execution.execute();
+			inst_finished_execution.write();
         	OutputManager.write(fud.gid, 4, MIPS.cycle);
         	WriteStage.gid_queue.add(fud.gid);     	
 		}

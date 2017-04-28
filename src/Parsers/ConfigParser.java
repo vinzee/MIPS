@@ -4,8 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
+import Cache.ICacheManager;
 import FunctionalUnits.*;
-import Managers.ICacheManager;
 
 public class ConfigParser {
 	public static void parse(String filepath) throws Exception {

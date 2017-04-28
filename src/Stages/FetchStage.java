@@ -2,6 +2,7 @@ package Stages;
 
 import java.util.ArrayList;
 
+import Cache.ICacheManager;
 import FunctionalUnits.FetchUnit;
 import Instructions.Instruction;
 import MIPS.MIPS;

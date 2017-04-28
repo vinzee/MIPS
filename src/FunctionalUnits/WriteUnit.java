@@ -10,7 +10,6 @@ public class WriteUnit extends FunctionalUnit {
 	}
 
 	public void execute(Instruction inst) throws Exception {
-		inst.write();
 		RegisterManager.push_cache_to_registers();
 	}
 }

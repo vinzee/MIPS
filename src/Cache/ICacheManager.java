@@ -1,4 +1,4 @@
-package Managers;
+package Cache;
 
 import java.util.Arrays;
 
@@ -7,6 +7,7 @@ import MIPS.MIPS;
 // Direct-mapped cache
 // access (hit) time of one cycle per word
 // I-Cache and D-Cache are both connected to main memory using a shared bus
+// http://www.cs.utexas.edu/users/mckinley/352/lectures/16.pdf
 
 public class ICacheManager {
 	public static int no_of_blocks;
@@ -15,8 +16,7 @@ public class ICacheManager {
 	public static boolean busy;
 	public static int latency;
 	public static int remaining_latency = 0;
-	public static int LATENCY_FOR_ONE = 3;
-	public static boolean ENABLED = true;
+	public static final int LATENCY_FOR_ONE = 3;
 	
 	public static void init(){
 		i_cache = new int[no_of_blocks][block_size]; 
@@ -28,7 +28,7 @@ public class ICacheManager {
 	}
 	
 	public static boolean is_available(int block_address){
-		if(!ENABLED) return true;
+		if(!MIPS.CACHING_ENABLED) return true;
 		
 		is_valid_address(block_address);
 			
@@ -44,6 +44,8 @@ public class ICacheManager {
 			}else{ // cache miss
 				MIPS.print("Cache miss: " + block_address);
 				insert(block_address);
+				busy = true;
+				remaining_latency = latency;
 				remaining_latency--;
 				return false;
 			}
@@ -56,29 +58,26 @@ public class ICacheManager {
 		}
 	}
 
-	public static boolean is_present(int block_address){
+	private static boolean is_present(int block_address){
 		return block_address == get(block_address);
 	}
 
-	public static int get(int block_address){
+	private static int get(int block_address){
 		int cache_block_address = (block_address / block_size) % no_of_blocks;
 		int cache_block_offset = block_address % no_of_blocks;
 
 		return i_cache[cache_block_address][cache_block_offset];
 	}
 
-	public static void insert(int block_address){
+	private static void insert(int block_address){
 		int cache_block_address = (block_address / block_size) % no_of_blocks;
 		
 		for(int i=0;i<4;i++){
 			i_cache[cache_block_address][i] = block_address + i;
 		}
-
-		busy = true;
-		remaining_latency = latency;
 	}
 
-	public static void debug(){
+	private static void debug(){
 		System.out.println("is_present(0): " + is_present(0));
 		insert(0);
 		System.out.println("is_present(0): " + is_present(0));

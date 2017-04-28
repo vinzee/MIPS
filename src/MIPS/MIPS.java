@@ -2,6 +2,8 @@ package MIPS;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import Cache.DCacheManager;
+import Cache.ICacheManager;
 import Instructions.Instruction;
 import Managers.*;
 import Parsers.*;
@@ -15,7 +17,8 @@ public class MIPS {
 	public static boolean halt = false;
 	public static int post_halt_count = 0;
 	public static int cycle = 1;
-	public static int MAX_CYCLES = 200;
+	public static final int MAX_CYCLES = 200;
+	public static final boolean CACHING_ENABLED = true;
 
 	public static void main(String[] args) throws Exception {
 		InstructionParser.parse(args[0]);
@@ -23,7 +26,8 @@ public class MIPS {
 		ConfigParser.parse(args[2]);
 		OutputManager.init(args[3]);
 		ICacheManager.init();
-		
+		DCacheManager.init();
+
 		MIPS.execute_scoreboard();
 	}
 	
