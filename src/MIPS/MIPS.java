@@ -2,8 +2,8 @@ package MIPS;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import Cache.DCacheManager;
-import Cache.ICacheManager;
+import Cache.*;
+import FunctionalUnits.ExecutionUnit;
 import Instructions.Instruction;
 import Managers.*;
 import Parsers.*;
@@ -12,13 +12,13 @@ import Stages.*;
 //	simulator inst.txt data.txt config.txt result.txt
 public class MIPS {
 	public static TreeMap<Integer, Instruction> instructions = new TreeMap<Integer, Instruction>();
-	public static HashMap<String, Integer> label_map = new HashMap<String, Integer>();	
+	public static HashMap<String, Integer> label_map = new HashMap<String, Integer>();
 
 	public static boolean halt = false;
 	public static int post_halt_count = 0;
 	public static int cycle = 1;
 	public static final int MAX_CYCLES = 200;
-	public static final boolean CACHING_ENABLED = true;
+	public static final boolean CACHING_ENABLED = false;
 
 	public static void main(String[] args) throws Exception {
 		InstructionParser.parse(args[0]);
@@ -30,7 +30,7 @@ public class MIPS {
 
 		MIPS.execute_scoreboard();
 	}
-	
+
 	// starting point
 	static void execute_scoreboard() throws Exception{
 		while(cycle < MAX_CYCLES){
@@ -39,24 +39,34 @@ public class MIPS {
 			ReadOperandsStage.execute();
 			IssueStage.execute();
 			FetchStage.execute();
+
+			CacheManager.run();
+
 			OutputManager.printResults();
 
-			if(halt) post_halt_count++;
 			if(stop_machine()) break;
 
 			cycle++;
 		}
 	}
-	
+
 	public static boolean stop_machine(){
-		return halt && post_halt_count > 5;
+		if(!halt) return false;
+
+		int busy_units = 	IssueStage.gid_queue.size() +
+							ReadOperandsStage.gid_queue.size() +
+							ExecuteStage.gid_queue.size() +
+							ExecutionUnit.busy_units.size() +
+							WriteStage.gid_queue.size();
+
+		return busy_units == 0;
 	}
-	
+
 	public static void halt_machine(){
 		halt = true;
 		MIPS.print("Halt Machine !!!");
 	}
-	
+
 	public static void print(String msg){
 		System.out.println((char)27 + "[1m" + msg + (char)27 + "[0m");
 	}

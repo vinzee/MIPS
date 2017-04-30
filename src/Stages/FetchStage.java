@@ -2,7 +2,7 @@ package Stages;
 
 import java.util.ArrayList;
 
-import Cache.ICacheManager;
+import Cache.CacheManager;
 import FunctionalUnits.FetchUnit;
 import Instructions.Instruction;
 import MIPS.MIPS;
@@ -18,7 +18,7 @@ public class FetchStage {
 			Instruction inst = MIPS.instructions.get(id);
 			if(inst == null) throw new Error("Invalid instruction index: " + id);
 			
-			if(ICacheManager.is_available(id)){
+			if(CacheManager.is_available_in_icache(id)){
 				System.out.println("Fetch- " + id + " - " + inst.toString());
 
 				int gid = OutputManager.add();
@@ -31,7 +31,7 @@ public class FetchStage {
 			}
 		}else{
 			if(id_queue.size() != 0) id = id_queue.remove(0);
-			if(id != -1) ICacheManager.is_available(id);
+			if(id != -1) CacheManager.is_available_in_icache(id);
 		}
 	}
 	

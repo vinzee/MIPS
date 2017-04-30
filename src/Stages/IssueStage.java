@@ -39,13 +39,13 @@ public class IssueStage {
 
 	private static boolean canIssue(Instruction inst, int gid) throws Exception {
 		if(!ExecutionUnit.isUnitAvailable(inst)){  // check structural hazards
-			MIPS.print("Structural Hazard: " + inst.toString());
+//			MIPS.print("Structural Hazard: " + inst.toString());
 			OutputManager.write_silent(gid, 8, 1);
 			return false;
 		}
 		
 		if(inst.isDestinationBeingWritten()){ // check WAW hazards
-			MIPS.print("WAW Hazard(DestinationBeingWritten): " + inst.toString());
+//			MIPS.print("WAW Hazard(DestinationBeingWritten): " + inst.toString());
 			OutputManager.write_silent(gid, 7, 1);
 			return false;
 		}

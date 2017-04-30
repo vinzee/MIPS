@@ -143,6 +143,7 @@ public class InstructionParser {
 			inst = new ADDD(register_operand1, register_operand2, register_operand3);
 			break;
 		case "MULD":
+		case "MULTD":
 			register_operand1 = new RegisterOperand(operands[0]);
 			register_operand2 = new RegisterOperand(operands[1]);
 			register_operand3 = new RegisterOperand(operands[2]);
@@ -177,7 +178,7 @@ public class InstructionParser {
 			inst = new HLT();
 			break;
 		default:
-			throw new Error("Invalid Opcode !");
+			throw new Error("Invalid Opcode: " + opcode);
 		}
 		inst.label = label;
 		

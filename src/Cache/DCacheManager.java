@@ -1,7 +1,6 @@
 package Cache;
 
-import Instructions.*;
-import Instructions.Operands.MemoryOperand;
+import MIPS.MIPS;
 
 // 2-way set associative = 2 blocks in set
 // 4-words blocks
@@ -18,6 +17,8 @@ public class DCacheManager {
 	public static int latency;
 	public static int remaining_latency = 0;
 	public static int prev_gid = -1;
+	public static boolean is_store;
+	public static int processing_block_address;
 
 	public static void init(){
 		d_cache_sets = new DCacheSet[no_of_sets];
@@ -29,71 +30,66 @@ public class DCacheManager {
 		latency = no_of_sets * LATENCY_PER_WORD;
 	}
 
-	private static DCacheSet getSet(int address){
+	static DCacheSet getSet(int address){
 		int set_id = address & 0b10000;
 		set_id = set_id >> 4;
 		return d_cache_sets[set_id];
 	}
 
-	private static int getBaseAddress(int address){
+	static int getBaseAddress(int address){
         int base_address = address >> 2;
         base_address = base_address << 2;
         return base_address;
     }
 
-//	set.isLRUBlockDirty()
+	public static boolean is_present(int address) {
+		DCacheSet set = DCacheManager.getSet(address);
+        int base_address = DCacheManager.getBaseAddress(address);
 
-    public static void write_block(DCacheSet set, int base_address, boolean store) throws Exception {
+        return set.doesAddressExist(base_address);
+	}
+
+	//	set.isLRUBlockDirty()
+
+    public static int write_block(int address, boolean store) throws Exception {
+		DCacheSet set = DCacheManager.getSet(address);
+        int base_address = DCacheManager.getBaseAddress(address);
         DCacheBlock block = null;
+        int execution_cycles = 0;
+
         // update same address block, if not then free block , if not then lru-block
-        if (set.doesAddressExist(base_address)){
-            block = set.getAddressBlock(base_address);
-        }else if (set.hasFreeBlock()){
+//        if (set.doesAddressExist(base_address)){
+//            block = set.getAddressBlock(base_address);
+//        }else
+        if (set.hasFreeBlock()){
             block = set.getEmptyBlock(base_address);
+            execution_cycles += DCacheManager.latency;
         }else{
             block = set.getLRUBlock();
+            execution_cycles += DCacheManager.latency;
+//            execution_cycles += DCacheManager.latency; // latency for eviction
         }
         if (block == null) throw new Exception("DCache cannot find a null block");
 
         block.base_address = base_address;
         block.dirty = store;
         set.toggleLRU(block);
+
+        return execution_cycles;
     }
 
-	public static boolean is_available(int gid, Instruction inst) throws Exception {
-		boolean is_load = (inst instanceof LD) || (inst instanceof LW);
-		boolean is_store = (inst instanceof SD) || (inst instanceof SW);
-
-		if(!is_load && !is_store) return true;
-
-		MemoryOperand mo = inst.getMemoryOperand();
-		int address = mo.final_address();
-		DCacheSet set = getSet(address);
-        int base_address = getBaseAddress(address);
-
-        if(prev_gid != -1 && prev_gid != gid && busy){
-        	throw new Error("Currently processing diff request in DCacheManager: " + prev_gid);
-        }
-//    	throw new Error("Same inst again in the DCacheManager: " + gid);
-
-        if(busy && !ICacheManager.busy){
+	public static void run() throws Exception{
+		if(busy){
 			remaining_latency--;
-			if(remaining_latency == 0) busy = false;
-			return false;
-        }else{
-            prev_gid = gid;
-
-    		if(set.doesAddressExist(base_address)){ // cache hit
-    			return true;
-    		}else if(!ICacheManager.busy){ // cache miss
-    			write_block(set, base_address, is_store);
-    			busy = true;
-    			remaining_latency = latency;
-    			remaining_latency--;
-    			return false;
-    		}else{
-    			return false;
-    		}
-        }
+			if(remaining_latency == 0){
+				write_block(processing_block_address, is_store);
+				processing_block_address = 0;
+				is_store = false;
+				busy = false;
+				prev_gid = -1;
+				MIPS.print("DCache: Fetched from cache !!!");
+			}
+		}
 	}
+
 }
