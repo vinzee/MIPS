@@ -41,25 +41,24 @@ public class MIPS {
 			FetchStage.execute();
 
 			CacheManager.run();
-
 			OutputManager.printResults();
 
 			if(stop_machine()) break;
 
 			cycle++;
 		}
+
+		OutputManager.printFile();
 	}
 
 	public static boolean stop_machine(){
 		if(!halt) return false;
 
-		int busy_units = 	IssueStage.gid_queue.size() +
-							ReadOperandsStage.gid_queue.size() +
-							ExecuteStage.gid_queue.size() +
-							ExecutionUnit.busy_units.size() +
-							WriteStage.gid_queue.size();
-
-		return busy_units == 0;
+		return IssueStage.gid_queue.isEmpty() &&
+				ReadOperandsStage.gid_queue.isEmpty() &&
+				ExecuteStage.gid_queue.isEmpty() &&
+				ExecutionUnit.busy_units.isEmpty() &&
+				WriteStage.gid_queue.isEmpty();
 	}
 
 	public static void halt_machine(){
