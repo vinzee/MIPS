@@ -86,7 +86,6 @@ public class ExecutionUnit {
 				return;
 			case "LoadUnit":
 				unit = LoadUnit.i;
-				if(inst instanceof LW || inst instanceof SW){ unit.latency = 1; }
 				break;
 			case "IntegerUnit":
 				unit = IntegerUnit.i;
@@ -102,7 +101,11 @@ public class ExecutionUnit {
 				break;
 		}
 		unit.setBusy(true);
-		FunctionalUnitData fud = new FunctionalUnitData(id, gid, unit, unit.latency);
+
+		int latency = unit.latency;
+		if(inst instanceof LW || inst instanceof SW){ latency = 1; }
+
+		FunctionalUnitData fud = new FunctionalUnitData(id, gid, unit, latency);
 		busy_units.put(gid, fud);
 	}
 
