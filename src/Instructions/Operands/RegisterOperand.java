@@ -23,11 +23,14 @@ public class RegisterOperand extends Operand {
 		RegisterManager.write(this, value);
 	}
 
-	public boolean isBeingWritten() throws Exception {
-		return RegisterManager.getWriteStatus(this);
+	public boolean isBeingWritten(int gid) throws Exception {
+		int old_gid = RegisterManager.getWriteStatus(this);
+		if(old_gid == 0) return false;
+
+		return old_gid < gid;
 	}
 
-	public void setWriteStatus(boolean value) throws Exception {
+	public void setWriteStatus(int value) throws Exception {
 		RegisterManager.setWriteStatus(this, value);
 	}
 

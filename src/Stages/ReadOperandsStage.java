@@ -43,7 +43,7 @@ public class ReadOperandsStage {
 	}
 
 	private static boolean canReadOperands(Instruction inst, int gid) throws Exception {
-		if(inst.areSourcesBeingWritten()){ // check RAW hazards
+		if(inst.areSourcesBeingWritten(gid)){ // check RAW hazards
 //			MIPS.print("RAW hazard(SourcesBeingWritten):" + inst.toString());
 			OutputManager.write_silent(gid, 6, 1);
 			return false;

@@ -28,7 +28,7 @@ public class IssueStage {
 				FetchUnit.i.setBusy(false);
 
 				IssueUnit.i.execute(inst, gid, id);
-				inst.markDestinationRegisterStatus();
+				inst.markDestinationRegisterStatus(gid);
 
 				OutputManager.write(gid, 2, MIPS.cycle);
 			}else{
@@ -45,7 +45,7 @@ public class IssueStage {
 			return false;
 		}
 
-		if(inst.isDestinationBeingWritten()){ // check WAW hazards
+		if(inst.isDestinationBeingWritten(gid)){ // check WAW hazards
 //			MIPS.print("WAW Hazard(DestinationBeingWritten): " + inst.toString());
 			OutputManager.write_silent(gid, 7, 1);
 			return false;
