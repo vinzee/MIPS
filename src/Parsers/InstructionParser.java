@@ -28,24 +28,24 @@ public class InstructionParser {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	private static void parseLine(String line, Integer count) throws Exception {
 		// TODO Auto-generated method stub
 		String label = null;
 		if(line.contains(":")){
 			String[] l = line.split(":");
-			label = l[0].toUpperCase();			
+			label = l[0].toUpperCase();
 			line = l[1];
 		}
 		String[] tokens = line.trim().split("[\\s]", 2);
-		String opcode = tokens[0].trim().toUpperCase().replace(".", "");		
+		String opcode = tokens[0].trim().toUpperCase().replace(".", "");
 		String[] operands = new String[0];
 		if(tokens.length > 1){
-			operands = tokens[1].replaceAll("\\s+", "").trim().split(",");				
+			operands = tokens[1].replaceAll("\\s+", "").trim().split(",");
 		}
-		
+
 		Instruction inst = createInstruction(label, opcode, operands);
-		
+
 		MIPS.instructions.put(count, inst);
 		if(label != null) MIPS.label_map.put(label, count);
 	}
@@ -56,7 +56,7 @@ public class InstructionParser {
 		ImmediateOperand immediate_operand = null;
 		MemoryOperand memory_operand = null;
 		RegisterOperand register_operand1 = null, register_operand2 = null, register_operand3 = null;
-		
+
 		switch(opcode){
 		case "LW": // Load Word
 			register_operand1 = new RegisterOperand(operands[0]);
@@ -79,13 +79,13 @@ public class InstructionParser {
 			inst = new LUI(register_operand1, immediate_operand);
 			break;
 		case "SW": // Store Word
-			register_operand1 = new RegisterOperand(operands[1]);
-			memory_operand = new MemoryOperand(operands[0]);
+			register_operand1 = new RegisterOperand(operands[0]);
+			memory_operand = new MemoryOperand(operands[1]);
 			inst = new SW(register_operand1, memory_operand);
 			break;
 		case "SD":
-			register_operand1 = new RegisterOperand(operands[1]);
-			memory_operand = new MemoryOperand(operands[0]);
+			register_operand1 = new RegisterOperand(operands[0]);
+			memory_operand = new MemoryOperand(operands[1]);
 			inst = new SD(register_operand1, memory_operand);
 			break;
 		case "DADD":
@@ -181,7 +181,7 @@ public class InstructionParser {
 			throw new Error("Invalid Opcode: " + opcode);
 		}
 		inst.label = label;
-		
+
 		return inst;
 	}
 

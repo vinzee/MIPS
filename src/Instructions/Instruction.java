@@ -23,9 +23,9 @@ public abstract class Instruction {
 		try {
 			StringBuilder s =  new StringBuilder((this.label == null ? "" : this.label + ":") + this.getClass().getSimpleName());
 			if(this.getDestinationRegister() != null) s.append(" " + this.getDestinationRegister().toString());
-			
+
 			for (RegisterOperand source_operand: this.getSourceRegisters())
-				s.append(", " + source_operand);		
+				s.append(", " + source_operand);
 			if(this.getMemoryOperand() != null) s.append(", " + this.getMemoryOperand().toString());
 			if(this.getImmediateOperand() != null) s.append(", " + this.getImmediateOperand().toString());
 
@@ -56,6 +56,6 @@ public abstract class Instruction {
 		for (RegisterOperand source_operand: this.getSourceRegisters()) {
 			if(source_operand.isBeingWritten()) return true;
 		}
-		return false;		
+		return false;
 	};
 }

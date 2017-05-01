@@ -8,7 +8,7 @@ import Managers.MemoryManager;
 public class SD extends Instruction{
 	RegisterOperand register_operand;
 	MemoryOperand memory_operand;
-	
+
 	public SD(RegisterOperand ro, MemoryOperand mo) {
 		this.register_operand = ro;
 		this.memory_operand = mo;
@@ -32,7 +32,8 @@ public class SD extends Instruction{
 	@Override
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
 		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
-		source_registers.add(this.register_operand);
+		source_registers.add(register_operand);
+		if(memory_operand.base_register != null) source_registers.add(memory_operand.base_register);
 		return source_registers;
 	}
 

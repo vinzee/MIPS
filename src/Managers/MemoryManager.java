@@ -6,13 +6,17 @@ public class MemoryManager {
 	public static int end_address;
 	public static TreeMap<Integer, Integer> memory = new TreeMap<Integer, Integer>();
 
-	public static boolean isValidAddress(int address) {
-		return start_address <= address && address <= end_address;
+	public static int getFormattedAddress(int address) {
+		int new_address = ((address - 256) / 4 ) + 256;
+
+		if(!memory.containsKey(new_address)) throw new Error("Invalid Memory address: " + address + " : " + new_address);
+
+		return new_address;
 	}
-	
+
 //	http://stackoverflow.com/questions/1735840/how-do-i-split-an-integer-into-2-byte-binary
 	public static void write(int address, String type, int value) {
-		if(!isValidAddress(address)) throw new Error("Invalid Memory address: " + address);
+		address = getFormattedAddress(address);
 
 		switch(type){
 		case "word":
@@ -28,10 +32,10 @@ public class MemoryManager {
 	}
 
 	public static Integer read(int address, String type) {
-		if(!isValidAddress(address)) throw new Error("Invalid Memory address - " + address);
+		address = getFormattedAddress(address);
 
 		int value = 0;
-		
+
 		switch(type){
 		case "word":
 			value = memory.get(address);
@@ -42,7 +46,7 @@ public class MemoryManager {
 			value = ((value_0 << 8) | (value_1 & 0xFF));
 			break;
 		}
-		
+
 		return value;
 	}
 

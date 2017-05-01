@@ -1,7 +1,6 @@
 package Managers;
 
 import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -19,18 +18,6 @@ public class OutputManager {
 		file_name = fname;
 	}
 
-	// 0		1  2  3  4  5  6    7    8		 9
-	// inst_no, F, I, R, E, W, RAW, WAW, struct, WAR
-	private static void printScoreboard(PrintStream out) {
-		System.out.println("----------------------Scoreboard:" + MIPS.cycle + "-----------------------");
-		System.out.println(String.format(instructionOutputFormatString, "#", "#", "Instruction", "FT", "IS", "RO", "EX", "WB", "RAW", "WAW", "Struct"));
-		int i=0;
-		for (int[] arr: output_table) {
-		  System.out.println(String.format(instructionOutputFormatString, i++, arr[0], MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N')); // , arr[9] == 1 ? 'Y' : 'N'
-		}
-		System.out.println("--------------------------------------------------------------------------");
-	}
-
 	public static int read(int gid, int col) {
 		return output_table.get(gid)[col];
 	}
@@ -45,7 +32,13 @@ public class OutputManager {
 	}
 
 	public static void printResults() {
-		printScoreboard(System.out);
+		System.out.println("----------------------Scoreboard:" + MIPS.cycle + "-----------------------");
+		System.out.println(String.format(instructionOutputFormatString, "#", "#", "Instruction", "FT", "IS", "RO", "EX", "WB", "RAW", "WAW", "Struct"));
+		int i=0;
+		for (int[] arr: output_table) {
+		  System.out.println(String.format(instructionOutputFormatString, i++, arr[0], MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N')); // , arr[9] == 1 ? 'Y' : 'N'
+		}
+		System.out.println("--------------------------------------------------------------------------");
 	}
 
 	public static void printFile() throws FileNotFoundException, UnsupportedEncodingException {

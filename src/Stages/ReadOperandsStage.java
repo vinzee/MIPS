@@ -13,7 +13,7 @@ import Managers.OutputManager;
 
 public class ReadOperandsStage {
 	public static ArrayList<Integer> gid_queue = new ArrayList<Integer>();
-	
+
 	public static void execute() throws Exception {
 		if(gid_queue.size() != 0){
 			if(gid_queue.get(0) == -1){ gid_queue.remove(0); return; }
@@ -26,7 +26,6 @@ public class ReadOperandsStage {
 				if(canReadOperands(inst, gid)){
 					gid = gid_queue.remove(i);
 					System.out.println("Read- " + gid + " - " + inst.toString());
-					inst.markDestinationRegisterStatus();
 
 					ReadOperandUnit.i.execute(inst, gid);
 

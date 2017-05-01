@@ -8,23 +8,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import Instructions.Instruction;
+import Instructions.LW;
+import Instructions.SW;
 
 public class ExecutionUnit {
 	HashMap<FunctionalUnit, Integer> status = new HashMap<FunctionalUnit, Integer>();
-	public static ArrayList<FpAdderUnit> fp_adder_unit_pool = new ArrayList<FpAdderUnit>(); 
-	public static ArrayList<FpDividerUnit> fp_divider_unit_pool = new ArrayList<FpDividerUnit>(); 
+	public static ArrayList<FpAdderUnit> fp_adder_unit_pool = new ArrayList<FpAdderUnit>();
+	public static ArrayList<FpDividerUnit> fp_divider_unit_pool = new ArrayList<FpDividerUnit>();
 	public static ArrayList<FpMultiplierUnit> fp_multiplier_unit_pool = new ArrayList<FpMultiplierUnit>();
 	public static HashMap<Integer, FunctionalUnitData> busy_units = new HashMap<Integer, FunctionalUnitData>();
 
 	public static FunctionalUnitData execute_busy_units() throws Exception{
 		Iterator<Entry<Integer, FunctionalUnitData>> itr = busy_units.entrySet().iterator();
 		boolean passed_to_next_stage = false;
-		
+
 		while (itr.hasNext()) {
-	        Map.Entry<Integer, FunctionalUnitData> pair = (Map.Entry<Integer, FunctionalUnitData>)itr.next();
+	        Map.Entry<Integer, FunctionalUnitData> pair = itr.next();
 	        FunctionalUnitData fud = pair.getValue();
-	        
-	        if(fud.is_executing){ // marked to run	        			        
+
+	        if(fud.is_executing){ // marked to run
 	            if(fud.remaining_latency != 0){
 			        System.out.println("FU execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
 		        	fud.remaining_latency -= 1;
@@ -37,7 +39,7 @@ public class ExecutionUnit {
 		        }
 		    }
 		}
-		return null;		
+		return null;
 	}
 
 	public static boolean isUnitAvailable(Instruction inst) throws Exception{
@@ -73,17 +75,18 @@ public class ExecutionUnit {
 		fud.is_executing = false;
 		busy_units.put(gid, fud);
 	}
-	
+
 	public static void allocate_unit(Instruction inst, int id, int gid) throws Exception{
 		String type_of_unit = get_type_of_unit(inst);
 		FunctionalUnit unit = null;
 //		System.out.println("FU allocate " + type_of_unit + " - " + id);
-		
+
 		switch(type_of_unit){
 			case "NoUnit":
 				return;
 			case "LoadUnit":
 				unit = LoadUnit.i;
+				if(inst instanceof LW || inst instanceof SW){ unit.latency = 1; }
 				break;
 			case "IntegerUnit":
 				unit = IntegerUnit.i;
@@ -105,56 +108,56 @@ public class ExecutionUnit {
 
 	public static void deallocate_unit(FunctionalUnitData fud) throws Exception{
 //    	System.out.println("FU deallocate: " + fud.unit.getClass().getSimpleName() + " , " + fud.id);
- 
+
     	fud.unit.setBusy(false);
     	if(fud.unit instanceof FpAdderUnit){
     		fp_adder_unit_pool.add((FpAdderUnit) fud.unit);
     	}else if(fud.unit instanceof FpDividerUnit){
-    		fp_divider_unit_pool.add((FpDividerUnit) fud.unit);		        		
+    		fp_divider_unit_pool.add((FpDividerUnit) fud.unit);
     	}else if(fud.unit instanceof FpMultiplierUnit){
-    		fp_multiplier_unit_pool.add((FpMultiplierUnit) fud.unit);		        		
+    		fp_multiplier_unit_pool.add((FpMultiplierUnit) fud.unit);
     	}
 
     	ExecutionUnit.busy_units.remove(fud.gid);
 	}
-	
+
 	private static String get_type_of_unit(Instruction inst) {
 		String inst_class = inst.getClass().getSimpleName();
 		String type_of_unit = null;
-		
+
 		switch(inst_class){
-		case "LW": 
-		case "LD": 
-		case "SW": 
-		case "SD": 
+		case "LW":
+		case "LD":
+		case "SW":
+		case "SD":
 			type_of_unit = "LoadUnit";
 			break;
-		case "AND": 
-		case "ANDI": 
-		case "OR": 
-		case "ORI": 
-		case "DADD": 
-		case "DADDI": 
-		case "DSUB": 
-		case "DSUBI": 
-		case "LI": 
-		case "LUI": 
+		case "AND":
+		case "ANDI":
+		case "OR":
+		case "ORI":
+		case "DADD":
+		case "DADDI":
+		case "DSUB":
+		case "DSUBI":
+		case "LI":
+		case "LUI":
 			type_of_unit = "IntegerUnit";
 			break;
-		case "ADDD": 
-		case "SUBD": 
+		case "ADDD":
+		case "SUBD":
 			type_of_unit = "FpAdderUnit";
 			break;
-		case "MULD": 
+		case "MULD":
 			type_of_unit = "FpMultiplierUnit";
 			break;
-		case "DIVD": 
+		case "DIVD":
 			type_of_unit = "FpDividerUnit";
 			break;
-		case "BEQ": 
-		case "BNE": 
-		case "J": 
-		case "HLT": 
+		case "BEQ":
+		case "BNE":
+		case "J":
+		case "HLT":
 			type_of_unit = "NoUnit";
 			break;
 		default:

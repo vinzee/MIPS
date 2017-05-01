@@ -21,13 +21,14 @@ public class IssueStage {
 
 			int id = OutputManager.read(gid_queue.get(0), 0);
 			Instruction inst = MIPS.instructions.get(id);
-			
+
 			if(canIssue(inst, gid_queue.get(0))){
 				int gid = gid_queue.remove(0);
 				System.out.println("Issue: " + gid + " - " + inst.toString());
 				FetchUnit.i.setBusy(false);
 
 				IssueUnit.i.execute(inst, gid, id);
+				inst.markDestinationRegisterStatus();
 
 				OutputManager.write(gid, 2, MIPS.cycle);
 			}else{
@@ -43,13 +44,13 @@ public class IssueStage {
 			OutputManager.write_silent(gid, 8, 1);
 			return false;
 		}
-		
+
 		if(inst.isDestinationBeingWritten()){ // check WAW hazards
 //			MIPS.print("WAW Hazard(DestinationBeingWritten): " + inst.toString());
 			OutputManager.write_silent(gid, 7, 1);
 			return false;
 		}
-		
+
 		return true;
 	}
 }

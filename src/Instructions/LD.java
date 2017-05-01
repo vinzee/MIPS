@@ -9,7 +9,7 @@ import Managers.RegisterManager;
 public class LD extends Instruction{
 	RegisterOperand register_operand;
 	MemoryOperand memory_operand;
-	
+
 	public LD(RegisterOperand ro, MemoryOperand mo) {
 		this.register_operand = ro;
 		this.memory_operand = mo;
@@ -35,6 +35,7 @@ public class LD extends Instruction{
 	@Override
 	public ArrayList<RegisterOperand> getSourceRegisters() throws Exception {
 		ArrayList<RegisterOperand> source_registers = new ArrayList<RegisterOperand>();
+		if(memory_operand.base_register != null) source_registers.add(memory_operand.base_register);
 		return source_registers;
 	}
 
@@ -48,5 +49,5 @@ public class LD extends Instruction{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
