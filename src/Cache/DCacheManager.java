@@ -2,6 +2,8 @@ package Cache;
 
 import MIPS.MIPS;
 
+//I-Cache and D-Cache are both connected to main memory using a shared bus
+
 // 2-way set associative = 2 blocks in set
 // 4-words blocks
 // hit time - one cycle per word

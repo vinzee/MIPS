@@ -18,7 +18,7 @@ public class MIPS {
 	public static int post_halt_count = 0;
 	public static int cycle = 1;
 	public static final int MAX_CYCLES = 200;
-	public static final boolean CACHING_ENABLED = false;
+	public static final boolean CACHING_ENABLED = true;
 
 	public static void main(String[] args) throws Exception {
 		InstructionParser.parse(args[0]);
@@ -34,13 +34,13 @@ public class MIPS {
 	// starting point
 	static void execute_scoreboard() throws Exception{
 		while(cycle < MAX_CYCLES){
+			CacheManager.run();
 			WriteStage.execute();
 			ExecuteStage.execute();
 			ReadOperandsStage.execute();
 			IssueStage.execute();
 			FetchStage.execute();
 
-			CacheManager.run();
 			OutputManager.printResults();
 
 			if(stop_machine()) break;

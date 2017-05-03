@@ -8,7 +8,6 @@ import Instructions.SW;
 import MIPS.MIPS;
 
 public class CacheManager {
-	
 
 	public static boolean is_available_in_d_cache(int gid, Instruction inst) throws Exception {
 		if(!MIPS.CACHING_ENABLED) return true;
@@ -29,18 +28,18 @@ public class CacheManager {
 				DCacheManager.remaining_latency = DCacheManager.write_block(address, is_store);
 	//			DCacheManager.remaining_latency--;
 				DCacheManager.busy = true;
-			}			
+			}
 			return false;
 		}
 	}
-	
+
 	public static boolean is_available_in_icache(int block_address){
 		if(!MIPS.CACHING_ENABLED) return true;
-		
+
 		ICacheManager.is_valid_address(block_address);
-			
+
 		if(ICacheManager.is_present(block_address)){ // cache hit
-			MIPS.print("ICache hit: " + block_address);
+//			MIPS.print("ICache hit: " + block_address);
 			return true;
 		}else{ // cache miss
 			if(!isBusy()){ // cache line not busy
@@ -53,7 +52,7 @@ public class CacheManager {
 			return false;
 		}
 	}
-	
+
 	public static void run() throws Exception{
 		if(ICacheManager.busy){
 			ICacheManager.run();
@@ -64,6 +63,17 @@ public class CacheManager {
 
 	public static boolean isBusy(){
 		return ICacheManager.busy || DCacheManager.busy;
+	}
+
+	static int get_mask(int ones, int zeros) {
+		int mask = 0;
+
+		for (int i = 0; i < ones; i ++)
+			mask = (mask << 1) + 1;
+
+		mask = mask << zeros;
+
+		return mask;
 	}
 
 }
