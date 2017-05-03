@@ -14,7 +14,7 @@ public class ReadOperandUnit extends FunctionalUnit {
 	public void execute(Instruction inst, int gid) throws Exception {
 		if((inst instanceof BEQ)){
 			if(((BEQ)inst).isConditionSatisfied()){
-				FetchStage.setId(-1); // skip current fetch
+//				FetchStage.setId(-1); // skip current fetch
 				FetchStage.setNextId(MIPS.label_map.get(((BNE) inst).label)); // set next fetch
 				IssueStage.gid_queue.clear();
 			}else{
@@ -22,7 +22,8 @@ public class ReadOperandUnit extends FunctionalUnit {
 			}
 		}else if(inst instanceof BNE){
 			if(((BNE)inst).isConditionSatisfied()){
-				FetchStage.setId(-1); // skip current fetch
+//				FetchStage.setId(-1); // skip current fetch
+				MIPS.jump = true;
 				FetchStage.setNextId(MIPS.label_map.get(((BNE) inst).label.toUpperCase())); // set next fetch
 				IssueStage.gid_queue.clear();
 			}else{

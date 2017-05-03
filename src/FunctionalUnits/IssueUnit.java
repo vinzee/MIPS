@@ -6,7 +6,7 @@ import Stages.*;
 
 public class IssueUnit extends FunctionalUnit {
 	public static final IssueUnit i = new IssueUnit(1);
-	
+
 	private IssueUnit(int latency) {
 		super(latency);
 	}
@@ -18,7 +18,7 @@ public class IssueUnit extends FunctionalUnit {
 			FetchStage.setId(-1); // skip current fetch
 			FetchStage.setNextId(MIPS.label_map.get(((J) inst).label)); // set next fetch
 		}else{
-			ReadOperandsStage.gid_queue.add(gid);			
+			ReadOperandsStage.gid_queue.add(gid);
 			ExecutionUnit.allocate_unit(inst, id, gid);
 		}
 	}

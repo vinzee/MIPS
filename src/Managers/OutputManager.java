@@ -5,12 +5,13 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import Cache.CacheManager;
 import MIPS.MIPS;
 
 public class OutputManager {
 	public static ArrayList<int[]> output_table = new ArrayList<int[]>();
 	public static int last_gid = -1;
-	public static final String instructionOutputFormatString = " %-2s %-2s %-20s  %-4s  %-4s  %-4s  %-4s  %-3s  %-3s  %-3s  %-1s";
+	public static final String instructionOutputFormatString = " %-2s %-2s %-20s  %-4s  %-4s  %-4s  %-4s  %-4s  %-3s  %-3s  %-3s  %-1s";
 	public static final String instructionPrintFormatString = " %-25s  %-4s  %-4s  %-4s  %-4s  %-3s  %-3s  %-3s  %-1s";
 	public static String file_name;
 
@@ -33,11 +34,13 @@ public class OutputManager {
 
 	public static void printResults() {
 		System.out.println("----------------------Scoreboard:" + MIPS.cycle + "-----------------------");
-		System.out.println(String.format(instructionOutputFormatString, "#", "#", "Instruction", "FT", "IS", "RO", "EX", "WB", "RAW", "WAW", "Struct"));
+		System.out.println(String.format(instructionOutputFormatString, "#", "#", "Instruction", "FT", "IS", "RO", "EX", "EX", "WB", "RAW", "WAW", "Struct"));
 		int i=0;
 		for (int[] arr: output_table) {
-		  System.out.println(String.format(instructionOutputFormatString, i++, arr[0], MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N')); // , arr[9] == 1 ? 'Y' : 'N'
+		  System.out.println(String.format(instructionOutputFormatString, i++, arr[0], MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[9], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N'));
 		}
+		System.out.println("\nICache:: Requests: " + CacheManager.icache_requests + " , Misses: " + CacheManager.icache_hits);
+		System.out.println("DCache:: Requests: " + CacheManager.dcache_requests+ " , Misses: " + CacheManager.dcache_hits);
 		System.out.println("--------------------------------------------------------------------------");
 	}
 
@@ -48,12 +51,14 @@ public class OutputManager {
 		for (int[] arr: output_table) {
 			file.println(String.format(instructionPrintFormatString, MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N')); // , arr[9] == 1 ? 'Y' : 'N'
 		}
+		file.println("\nICache:: Requests: " + CacheManager.icache_requests + " , Misses: " + CacheManager.icache_hits);
+		file.println("DCache:: Requests: " + CacheManager.dcache_requests+ " , Misses: " + CacheManager.dcache_hits);
 
 		file.close();
 	}
 
 	public static int add() {
-		output_table.add(new int[9]);
+		output_table.add(new int[10]);
 		return ++last_gid;
 	}
 }

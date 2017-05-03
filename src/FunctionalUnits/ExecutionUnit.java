@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import Instructions.Instruction;
 import Instructions.LW;
 import Instructions.SW;
+import MIPS.MIPS;
 
 public class ExecutionUnit {
 	HashMap<FunctionalUnit, Integer> status = new HashMap<FunctionalUnit, Integer>();
@@ -18,9 +19,9 @@ public class ExecutionUnit {
 	public static ArrayList<FpMultiplierUnit> fp_multiplier_unit_pool = new ArrayList<FpMultiplierUnit>();
 	public static HashMap<Integer, FunctionalUnitData> busy_units = new HashMap<Integer, FunctionalUnitData>();
 
-	public static FunctionalUnitData execute_busy_units() throws Exception{
+	public static ArrayList<FunctionalUnitData> execute_busy_units() throws Exception{
 		Iterator<Entry<Integer, FunctionalUnitData>> itr = busy_units.entrySet().iterator();
-		boolean passed_to_next_stage = false;
+		ArrayList<FunctionalUnitData> out = new ArrayList<FunctionalUnitData>();
 
 		while (itr.hasNext()) {
 	        Map.Entry<Integer, FunctionalUnitData> pair = itr.next();
@@ -32,14 +33,14 @@ public class ExecutionUnit {
 		        	fud.remaining_latency -= 1;
 		        	pair.setValue(fud);
 		        }
+
 	            if(fud.remaining_latency == 0){
-	            	if(passed_to_next_stage) throw new Error("Passing multiple instructions to WriteStage at same time");
-	            	passed_to_next_stage = true;
-		        	return fud;
+	            	out.add(fud);
 		        }
 		    }
 		}
-		return null;
+
+		return out;
 	}
 
 	public static boolean isUnitAvailable(Instruction inst) throws Exception{

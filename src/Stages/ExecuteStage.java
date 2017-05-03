@@ -28,13 +28,15 @@ public class ExecuteStage {
 					gid = gid_queue.remove(i);
 					System.out.println("Execute- " + gid + " - " + inst.toString());
 					ExecutionUnit.run_unit(gid);
+		        	OutputManager.write(gid, 9, MIPS.cycle);
 					break;
 				}
 			}
 		}
 
-		FunctionalUnitData fud = ExecutionUnit.execute_busy_units();
-		if(fud != null){
+		ArrayList<FunctionalUnitData> out = ExecutionUnit.execute_busy_units();
+
+		for(FunctionalUnitData fud: out){
 			Instruction inst_finished_execution = MIPS.instructions.get(fud.id);
 			inst_finished_execution.execute();
 			inst_finished_execution.write();

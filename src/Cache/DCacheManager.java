@@ -11,87 +11,106 @@ import MIPS.MIPS;
 //• Write-allocate policy
 //• LRU replacement
 public class DCacheManager {
-	public static int no_of_blocks = 2; // no_of_blocks in set
-	public static int no_of_sets = 4;
 	public static DCacheSet[] d_cache_sets;
+	public static int no_of_sets = 4;
 	public static boolean busy;
-	public static final int LATENCY_PER_WORD = 3;
 	public static int latency;
-	public static int remaining_latency = 0;
-	public static int prev_gid = -1;
-	public static boolean is_store;
-	public static int processing_block_address;
 
-	public static void init(){
+	public static DCacheRequest dcache_request;
+
+	public static int index_length = (int) (Math.log(no_of_sets) / Math.log(2));
+	public static int index_mask;
+
+	public static void init() throws Exception{
 		d_cache_sets = new DCacheSet[no_of_sets];
 
-		for(int i=0;i<no_of_sets;i++){
-			d_cache_sets[i] = new DCacheSet();
-		}
+		for(int i=0;i<no_of_sets;i++) d_cache_sets[i] = new DCacheSet();
 
-		latency = no_of_sets * LATENCY_PER_WORD;
+		latency = no_of_sets * CacheManager.LATENCY_PER_WORD;
+		index_mask = CacheManager.get_mask(index_length, 0);
+
+//		debug();
 	}
-
-	static DCacheSet getSet(int address){
-		int set_id = address & 0b10000;
-		set_id = set_id >> 4;
-		return d_cache_sets[set_id];
-	}
-
-	static int getBaseAddress(int address){
-        int base_address = address >> 2;
-        base_address = base_address << 2;
-        return base_address;
-    }
 
 	public static boolean is_present(int address) {
-		DCacheSet set = DCacheManager.getSet(address);
-        int base_address = DCacheManager.getBaseAddress(address);
-
-        return set.doesAddressExist(base_address);
+		int set_id = address & index_mask;
+		DCacheSet set = d_cache_sets[set_id];
+        int base_address = address >> index_length;
+		System.out.println("set_id:" + set_id + " , base_address: " + base_address);
+		print_state();
+		return set.does_address_exist(base_address);
 	}
 
-	//	set.isLRUBlockDirty()
+    public static void write_block() throws Exception {
+    	dcache_request.block.base_address = dcache_request.base_address;
+    	dcache_request.block.dirty = dcache_request.store;
+    	dcache_request.set.toggle_lru(dcache_request.block);
+		busy = false;
+		dcache_request = null;
+    }
 
-    public static int write_block(int address, boolean store) throws Exception {
-		DCacheSet set = DCacheManager.getSet(address);
-        int base_address = DCacheManager.getBaseAddress(address);
+    public static int process_write(int address, boolean store) throws Exception {
+		int set_id = address & index_mask;
+		DCacheSet set = d_cache_sets[set_id];
+        int base_address = address >> index_length;
         DCacheBlock block = null;
-        int execution_cycles = 0;
+        int total_latency = 0;
 
-        // update same address block, if not then free block , if not then lru-block
-//        if (set.doesAddressExist(base_address)){
-//            block = set.getAddressBlock(base_address);
-//        }else
-        if (set.hasFreeBlock()){
-            block = set.getEmptyBlock(base_address);
-            execution_cycles += DCacheManager.latency;
+//        System.out.println("$$set_id:" + set_id + " , base_address: " + base_address);
+
+        if (set.has_free_block()){
+            block = set.get_empty_block(base_address);
+            total_latency += DCacheManager.latency;
         }else{
-            block = set.getLRUBlock();
-            execution_cycles += DCacheManager.latency;
-//            execution_cycles += DCacheManager.latency; // latency for eviction
+            block = set.get_lru_block();
+            total_latency += DCacheManager.latency;
+//            total_latency += DCacheManager.latency; // latency for eviction
+            // TODO - if dirty, save block to memory before eviction
         }
         if (block == null) throw new Exception("DCache cannot find a null block");
 
-        block.base_address = base_address;
-        block.dirty = store;
-        set.toggleLRU(block);
+        dcache_request = new DCacheRequest(address, base_address, set, block, store, total_latency, total_latency);
 
-        return execution_cycles;
+        busy = true;
+
+        return total_latency;
     }
+
+	public static void process_read(int address) {
+		int set_id = address & index_mask;
+		DCacheSet set = d_cache_sets[set_id];
+        int base_address = address >> index_length;
+
+        DCacheBlock block = set.get_address_block(base_address);
+
+        set.toggle_lru(block);
+	}
 
 	public static void run() throws Exception{
 		if(busy){
-			remaining_latency--;
-			if(remaining_latency == 0){
-				write_block(processing_block_address, is_store);
-				processing_block_address = 0;
-				is_store = false;
-				busy = false;
-				prev_gid = -1;
+			dcache_request.remaining_latency--;
+			if(dcache_request.remaining_latency == 0){
+				write_block();
 				MIPS.print("DCache: Fetched from cache !!!");
 			}
 		}
+	}
+
+	private static void print_state(){
+		System.out.println("---------------");
+		for(int i=0;i<d_cache_sets.length;i++)
+			System.out.println(d_cache_sets[i]);
+		System.out.println("---------------");
+	}
+
+	private static void debug() throws Exception {
+		System.out.println(is_present(266));
+		System.out.println(process_write(266, true));
+		System.out.println(is_present(266));
+//		print_state();
+		write_block();
+//		print_state();
+		System.out.println(is_present(266));
 	}
 
 }

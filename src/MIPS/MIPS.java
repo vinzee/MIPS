@@ -2,7 +2,7 @@ package MIPS;
 import java.util.HashMap;
 import java.util.TreeMap;
 
-import Cache.*;
+import Cache.CacheManager;
 import FunctionalUnits.ExecutionUnit;
 import Instructions.Instruction;
 import Managers.*;
@@ -15,6 +15,7 @@ public class MIPS {
 	public static HashMap<String, Integer> label_map = new HashMap<String, Integer>();
 
 	public static boolean halt = false;
+	public static boolean jump = false;
 	public static int post_halt_count = 0;
 	public static int cycle = 1;
 	public static final int MAX_CYCLES = 200;
@@ -25,8 +26,7 @@ public class MIPS {
 		MemoryParser.parse(args[1]);
 		ConfigParser.parse(args[2]);
 		OutputManager.init(args[3]);
-		ICacheManager.init();
-		DCacheManager.init();
+		CacheManager.init();
 
 		MIPS.execute_scoreboard();
 	}

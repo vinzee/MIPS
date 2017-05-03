@@ -8,8 +8,9 @@ public class DCacheBlock {
 		this.base_address = base_address;
 		this.dirty = false;
 	}
-	
-	 public boolean isFree(){
-        return (base_address == -1);
-    }
+
+	@Override
+	public String toString() {
+		return  Integer.toString(this.base_address);
+	}
 }
