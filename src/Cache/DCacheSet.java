@@ -22,9 +22,7 @@ public class DCacheSet {
     }
 
     public boolean does_address_exist(int base_address){
-    	System.out.println(base_address + " , " + d_cache_blocks[0].base_address + " , " + d_cache_blocks[1].base_address);
-    	return ((d_cache_blocks[0].base_address == base_address)
-                || (d_cache_blocks[1].base_address == base_address));
+    	return ((d_cache_blocks[0].base_address == base_address) || (d_cache_blocks[1].base_address == base_address));
     }
 
     public DCacheBlock get_address_block(int base_address){

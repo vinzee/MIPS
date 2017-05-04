@@ -26,7 +26,7 @@ public class ExecuteStage {
 
 				if(CacheManager.is_available_in_d_cache(gid, inst)){
 					gid = gid_queue.remove(i);
-					System.out.println("Execute- " + gid + " - " + inst.toString());
+//					System.out.println("Execute- " + gid + " - " + inst.toString());
 					ExecutionUnit.run_unit(gid);
 		        	OutputManager.write(gid, 9, MIPS.cycle);
 					break;

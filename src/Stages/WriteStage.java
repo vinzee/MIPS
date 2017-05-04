@@ -29,11 +29,10 @@ public class WriteStage {
 
 			for (int i = 0;i < gid_queue.size();i++) {
 				int gid = gid_queue.remove(i);
-
 				int id = OutputManager.read(gid, 0);
 				Instruction inst = MIPS.instructions.get(id);
 
-				System.out.println("Write: " + gid + " - " + inst.toString());
+//				System.out.println("Write: " + gid + " - " + inst.toString());
 				WriteUnit.i.execute(inst);
 
 				ExecutionUnit.stop_unit(gid);

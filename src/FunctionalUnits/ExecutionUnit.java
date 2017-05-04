@@ -29,7 +29,7 @@ public class ExecutionUnit {
 
 	        if(fud.is_executing){ // marked to run
 	            if(fud.remaining_latency != 0){
-			        System.out.println("FU execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
+//			        System.out.println("FU execute " + fud.unit.getClass().getSimpleName() + " : " + fud.remaining_latency);
 		        	fud.remaining_latency -= 1;
 		        	pair.setValue(fud);
 		        }

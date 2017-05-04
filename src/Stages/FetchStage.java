@@ -19,7 +19,7 @@ public class FetchStage {
 			if(inst == null) throw new Error("Invalid instruction index: " + id);
 
 			if(CacheManager.is_available_in_icache(id)){
-				System.out.println("Fetch- " + id + " - " + inst.toString());
+//				System.out.println("Fetch- " + id + " - " + inst.toString());
 
 				int gid = OutputManager.add();
 				FetchUnit.i.execute(inst, gid);

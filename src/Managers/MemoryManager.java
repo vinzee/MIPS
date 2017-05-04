@@ -7,11 +7,15 @@ public class MemoryManager {
 	public static TreeMap<Integer, Integer> memory = new TreeMap<Integer, Integer>();
 
 	public static int getFormattedAddress(int address) {
-		int new_address = ((address - 256) / 4 ) + 256;
+		int new_address = translate_address(address);
 
 		if(!memory.containsKey(new_address)) throw new Error("Invalid Memory address: " + address + " : " + new_address);
 
 		return new_address;
+	}
+
+	public static int translate_address(int address){
+		return ((address - 256) / 4 ) + 256;
 	}
 
 //	http://stackoverflow.com/questions/1735840/how-do-i-split-an-integer-into-2-byte-binary

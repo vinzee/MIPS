@@ -24,7 +24,7 @@ public class IssueStage {
 
 			if(canIssue(inst, gid_queue.get(0))){
 				int gid = gid_queue.remove(0);
-				System.out.println("Issue: " + gid + " - " + inst.toString());
+//				System.out.println("Issue: " + gid + " - " + inst.toString());
 				FetchUnit.i.setBusy(false);
 
 				IssueUnit.i.execute(inst, gid, id);
