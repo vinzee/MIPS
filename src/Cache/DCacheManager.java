@@ -13,25 +13,25 @@ import MIPS.MIPS;
 //                          and the write is reattempted
 //• LRU replacement
 public class DCacheManager {
-	public static DCacheSet[] d_cache_sets;
-	public static int no_of_sets = 4;
+	private static DCacheSet[] d_cache_sets;
+	private static DCacheRequest dcache_request;
 	public static boolean busy;
-	public static int latency;
 
-	public static DCacheRequest dcache_request;
-
-	public static int index_length = 2; // (int) (Math.log(no_of_sets) / Math.log(2));
-	public static int offset_length = 2; // (int) (Math.log(no_of_sets) / Math.log(2));
-	public static int index_mask;
+	private static int no_of_sets = 2;
+	private static int block_size = 4;
+	private static int set_id_length = (int) (Math.log(no_of_sets) / Math.log(2));
+	private static int offset_length = (int) (Math.log(block_size) / Math.log(2));
+	private static int set_id_mask;
+	private static int latency;
 
 	public static void init() throws Exception{
 		d_cache_sets = new DCacheSet[no_of_sets];
 
 		for(int i=0;i<no_of_sets;i++) d_cache_sets[i] = new DCacheSet();
 
-		latency = no_of_sets * CacheManager.LATENCY_PER_WORD;
-		index_mask = CacheManager.get_mask(index_length, offset_length);
-		CacheManager.print("index_mask: " + index_mask);
+		latency = block_size * CacheManager.LATENCY_PER_WORD;
+		set_id_mask = CacheManager.get_mask(set_id_length, offset_length);
+		CacheManager.print("set_id_mask: " + set_id_mask);
 
 //		debug();
 	}
@@ -47,7 +47,7 @@ public class DCacheManager {
 		CacheManager.print("write: " + dcache_request.address + " :: " + dcache_request.base_address + " , " + dcache_request.set);
     	dcache_request.block.base_address = dcache_request.base_address;
     	dcache_request.block.dirty = dcache_request.store;
-    	dcache_request.set.toggle_lru(dcache_request.block);
+    	dcache_request.block.no_of_reads = 0;
 		busy = false;
 		dcache_request = null;
 		print_state();
@@ -60,8 +60,8 @@ public class DCacheManager {
         DCacheBlock block = null;
         int total_latency = 0;
 
-        if (set.has_free_block()){
-            block = set.get_empty_block(base_address);
+        block = set.get_empty_block(base_address);
+        if (block != null){
             total_latency += DCacheManager.latency;
         }else{
             block = set.get_lru_block();
@@ -83,8 +83,7 @@ public class DCacheManager {
 		DCacheSet set = d_cache_sets[set_id];
 		int base_address = get_base_address(address);
         DCacheBlock block = set.get_address_block(base_address);
-
-        set.toggle_lru(block);
+        block.no_of_reads += 1;
 	}
 
 	public static void run() throws Exception{
@@ -106,11 +105,11 @@ public class DCacheManager {
 	}
 
 	private static int get_set_id(int address){
-		return (address & index_mask) >> offset_length;
+		return (address & set_id_mask) >> offset_length;
 	}
 
     private static int get_base_address(int address) {
-        return address >> (index_length+offset_length);
+        return address >> (set_id_length+offset_length);
 	}
 
 	private static void debug() throws Exception {
@@ -118,7 +117,7 @@ public class DCacheManager {
 		System.out.println(process_write(266, true));
 		System.out.println(is_present(266));
 //		print_state();
-		write_block();
+//		write_block();
 //		print_state();
 		System.out.println(is_present(266));
 	}

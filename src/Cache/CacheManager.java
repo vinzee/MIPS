@@ -11,7 +11,7 @@ import MIPS.MIPS;
 import Managers.MemoryManager;
 
 public class CacheManager {
-	public static final boolean logging = !true;
+	public static final boolean logging = true;
 	public static final int LATENCY_PER_WORD = 3;
 	public static int icache_misses = 0;
 	public static int icache_hits = 0;
@@ -41,7 +41,8 @@ public class CacheManager {
 		boolean out = _is_available_in_d_cache(address, gid, inst, is_store);
 
 		if(out && (inst instanceof LD || inst instanceof SD)){
-			int address2 = MemoryManager.translate_address(address + 1);
+			int address2 = address + 1;
+			MemoryManager.translate_address(address2);
 			out = out && _is_available_in_d_cache(address2, gid, inst, is_store);
 		}
 
@@ -57,13 +58,13 @@ public class CacheManager {
 			if(!dcache_processed_addresses.contains(key)) dcache_requests += 1;
 
 			if(DCacheManager.is_present(address)){ // cache hit
-				print("hit: " + address + "  inst: " + inst.toString());
+				if(!dcache_processed_addresses.contains(key)) print("hit: " + address + "  inst: " + inst.toString());
 				DCacheManager.process_read(address);
 				if(!dcache_processed_addresses.contains(key)) dcache_hits += 1;
 				dcache_processed_addresses.add(key);
 				return true;
 			}else{ // cache miss
-				print("miss: " + address + "  inst: " + inst.toString());
+				if(!dcache_processed_addresses.contains(key)) print("miss: " + address + "  inst: " + inst.toString());
 				if(!ICacheManager.busy){
 					DCacheManager.process_write(address, is_store);
 				}
