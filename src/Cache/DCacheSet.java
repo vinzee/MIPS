@@ -15,7 +15,11 @@ public class DCacheSet {
     }
 
     public boolean does_address_exist(int base_address){
-    	return ((d_cache_blocks[0].base_address == base_address) || (d_cache_blocks[1].base_address == base_address));
+    	for(int i=0;i<4;i++){
+			if (d_cache_blocks[i].base_address == base_address)
+                return true;
+    	}
+    	return false;
     }
 
     public DCacheBlock get_address_block(int base_address){
