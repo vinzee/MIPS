@@ -13,25 +13,21 @@ import MIPS.MIPS;
 //                          and the write is reattempted
 //• LRU replacement
 public class DCacheManager {
-	private static DCacheSet[] d_cache_sets;
+	private static int no_of_sets = 2;
+	static int block_size = 4;
+	private static DCacheSet[] d_cache_sets = new DCacheSet[no_of_sets];
 	private static DCacheRequest dcache_request;
 	public static boolean busy;
 
-	private static int no_of_sets = 2;
-	private static int block_size = 4;
 	private static int set_id_length = (int) (Math.log(no_of_sets) / Math.log(2));
 	private static int offset_length = (int) (Math.log(block_size) / Math.log(2));
 	private static int set_id_mask;
 	private static int latency;
 
 	public static void init() throws Exception{
-		d_cache_sets = new DCacheSet[no_of_sets];
-
 		for(int i=0;i<no_of_sets;i++) d_cache_sets[i] = new DCacheSet();
-
 		latency = block_size * CacheManager.LATENCY_PER_WORD;
 		set_id_mask = CacheManager.get_mask(set_id_length, offset_length);
-		CacheManager.print("set_id_mask: " + set_id_mask);
 
 //		debug();
 	}
@@ -44,7 +40,7 @@ public class DCacheManager {
 	}
 
 	public static void write_block() throws Exception {
-		CacheManager.print("write: " + dcache_request.address + " :: " + dcache_request.base_address + " , " + dcache_request.set);
+		CacheManager.print("write: " + dcache_request.address + " , base_address: " + dcache_request.base_address + " , cycle: " + MIPS.cycle);
     	dcache_request.block.base_address = dcache_request.base_address;
     	dcache_request.block.dirty = dcache_request.store;
     	dcache_request.block.no_of_reads = 0;
@@ -71,8 +67,7 @@ public class DCacheManager {
         }
         if (block == null) throw new Exception("DCache cannot find a null block");
 
-        dcache_request = new DCacheRequest(address, base_address, set, block, store, total_latency, total_latency);
-
+        dcache_request = new DCacheRequest(address, base_address, set, block, store, total_latency);
         busy = true;
 
         return total_latency;
@@ -89,6 +84,7 @@ public class DCacheManager {
 	public static void run() throws Exception{
 		if(busy){
 			dcache_request.remaining_latency--;
+			CacheManager.print("run: " + dcache_request.remaining_latency + " inst: " + dcache_request.address + " , cycle: " + MIPS.cycle);
 			if(dcache_request.remaining_latency == 0){
 				write_block();
 			}

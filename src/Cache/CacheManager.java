@@ -58,13 +58,13 @@ public class CacheManager {
 			if(!dcache_processed_addresses.contains(key)) dcache_requests += 1;
 
 			if(DCacheManager.is_present(address)){ // cache hit
-				if(!dcache_processed_addresses.contains(key)) print("hit: " + address + "  inst: " + inst.toString());
+				if(!dcache_processed_addresses.contains(key)) print("hit: " + address + "  inst: " + inst.toString() + " , cycle: " + MIPS.cycle);
 				DCacheManager.process_read(address);
 				if(!dcache_processed_addresses.contains(key)) dcache_hits += 1;
 				dcache_processed_addresses.add(key);
 				return true;
 			}else{ // cache miss
-				if(!dcache_processed_addresses.contains(key)) print("miss: " + address + "  inst: " + inst.toString());
+				if(!dcache_processed_addresses.contains(key)) print("miss: " + address + "  inst: " + inst.toString() + " , cycle: " + MIPS.cycle);
 				if(!ICacheManager.busy){
 					DCacheManager.process_write(address, is_store);
 				}
