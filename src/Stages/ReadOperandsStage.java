@@ -25,6 +25,7 @@ public class ReadOperandsStage {
 
 				if(canReadOperands(inst, gid)){
 					gid = gid_queue.remove(i);
+					i--;
 //					System.out.println("Read- " + gid + " - " + inst.toString());
 
 					ReadOperandUnit.i.execute(inst, gid);
