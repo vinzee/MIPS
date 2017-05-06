@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class DCacheSet {
 	// 2 blocks in set
-	DCacheBlock[] d_cache_blocks = new DCacheBlock[DCacheManager.block_size];
+	DCacheBlock[] d_cache_blocks = new DCacheBlock[DCacheManager.no_of_blocks];
     int lru = 0;
 
     public DCacheSet(){
@@ -13,7 +13,7 @@ public class DCacheSet {
     }
 
     public boolean does_address_exist(int base_address){
-    	for(int i=0;i<DCacheManager.block_size;i++){
+    	for(int i=0;i<DCacheManager.no_of_blocks;i++){
 			if (d_cache_blocks[i].base_address == base_address)
                 return true;
     	}
@@ -21,7 +21,7 @@ public class DCacheSet {
     }
 
     public DCacheBlock get_address_block(int base_address){
-    	for(int i=0;i<DCacheManager.block_size;i++){
+    	for(int i=0;i<DCacheManager.no_of_blocks;i++){
             if (d_cache_blocks[i].base_address == base_address)
                 return d_cache_blocks[i];
     	}
@@ -29,7 +29,7 @@ public class DCacheSet {
     }
 
     public DCacheBlock get_empty_block(int base_address){
-    	for(int i=0;i<DCacheManager.block_size;i++){
+    	for(int i=0;i<DCacheManager.no_of_blocks;i++){
             if (d_cache_blocks[i].base_address == -1)
                 return d_cache_blocks[i];
     	}
@@ -40,7 +40,7 @@ public class DCacheSet {
     	int min = 999;
     	int min_i = -1;
 
-    	for(int i=0;i<DCacheManager.block_size;i++){
+    	for(int i=0;i<DCacheManager.no_of_blocks;i++){
     		if(d_cache_blocks[i].no_of_reads < min){
     			min = d_cache_blocks[i].no_of_reads;
     			min_i = i;

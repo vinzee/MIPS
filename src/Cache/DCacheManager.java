@@ -15,6 +15,8 @@ import MIPS.MIPS;
 public class DCacheManager {
 	private static int no_of_sets = 2;
 	static int block_size = 4;
+	static int no_of_blocks = 2; // no_of_blocks within a set
+
 	private static DCacheSet[] d_cache_sets = new DCacheSet[no_of_sets];
 	private static DCacheRequest dcache_request;
 	public static boolean busy;
