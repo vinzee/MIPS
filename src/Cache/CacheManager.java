@@ -75,7 +75,7 @@ public class CacheManager {
 		}
 	}
 
-	public static boolean is_available_in_icache(int block_address){
+	public static boolean is_available_in_icache(int block_address, int gid){
 		if(!MIPS.CACHING_ENABLED) return true;
 
 		ICacheManager.is_valid_address(block_address);
@@ -83,7 +83,7 @@ public class CacheManager {
 		if(ICacheManager.busy){ // cache line not busy
 			return false;
 		}else{
-			String key = Integer.toString(block_address);
+			String key = Integer.toString(gid);
 			if(!icache_processed_addresses.contains(key)) icache_requests += 1;
 
 			if(ICacheManager.is_present(block_address)){ // cache hit

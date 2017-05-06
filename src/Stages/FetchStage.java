@@ -13,6 +13,7 @@ public class FetchStage {
 	private static int id = 0;
 	public static ArrayList<Integer> id_queue = new ArrayList<Integer>();
 	private static int unused_gid = -1;
+	private static int prev_gid = -1;
 
 	public static void execute() {
 		if(canFetch() && id != -1){
@@ -21,10 +22,11 @@ public class FetchStage {
 
 			int gid = (unused_gid == -1) ? OutputManager.add() : unused_gid;
 
-			if(CacheManager.is_available_in_icache(gid)){
+			if(CacheManager.is_available_in_icache(id, gid)){
 //				System.out.println("Fetch- " + id + " - " + inst.toString());
 				unused_gid = -1;
 				FetchUnit.i.execute(inst, gid);
+
 
 				OutputManager.write(gid, 0, id);
 				OutputManager.write(gid,1, MIPS.cycle);
@@ -37,12 +39,13 @@ public class FetchStage {
 				}else{
 					id = id+1;
 				}
+				prev_gid = gid;
 			}else{
 				unused_gid = gid;
 			}
 		}else{
 			if(id_queue.size() != 0) id = id_queue.remove(0);
-			if(id != -1) CacheManager.is_available_in_icache(id);
+			if(id != -1) CacheManager.is_available_in_icache(id, prev_gid+1);
 		}
 	}
 
