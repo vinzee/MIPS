@@ -42,8 +42,8 @@ public class DCacheManager {
 	}
 
 	public static void write_block() throws Exception {
-		CacheManager.print("write: " + dcache_request.address + " , base_address: " + dcache_request.base_address + " , cycle: " + MIPS.cycle);
-    	if(dcache_request.store && dcache_request.block.base_address != -1){
+		CacheManager.print("write: " + dcache_request.address + " , base_address: " + dcache_request.base_address + " , store:" + dcache_request.store + " , cycle:" + MIPS.cycle);
+    	if(dcache_request.store){
         	dcache_request.block.dirty = true;
     	}
     	dcache_request.block.base_address = dcache_request.base_address;
@@ -93,7 +93,7 @@ public class DCacheManager {
 	public static void run() throws Exception{
 		if(busy){
 			dcache_request.remaining_latency--;
-			CacheManager.print("run: " + dcache_request.remaining_latency + " inst: " + dcache_request.address + " , cycle: " + MIPS.cycle);
+//			CacheManager.print("run: " + dcache_request.remaining_latency + " inst: " + dcache_request.address + " , cycle: " + MIPS.cycle);
 			if(dcache_request.remaining_latency <= 0){
 				write_block();
 			}
