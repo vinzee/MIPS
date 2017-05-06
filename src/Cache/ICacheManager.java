@@ -67,15 +67,12 @@ public class ICacheManager {
 
 		processing_block_address = 0;
 		busy = false;
-
-		//	FIXME - this is a patch for including instr in loop in the cache counts
-		CacheManager.icache_processed_addresses.clear();
 	}
 
 	public static void run(){
 		if(busy){
 			remaining_latency--;
-			if(remaining_latency == 0){
+			if(remaining_latency <= 0){
 				write_block(processing_block_address);
 			}
 		}

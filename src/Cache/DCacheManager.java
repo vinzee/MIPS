@@ -43,8 +43,10 @@ public class DCacheManager {
 
 	public static void write_block() throws Exception {
 		CacheManager.print("write: " + dcache_request.address + " , base_address: " + dcache_request.base_address + " , cycle: " + MIPS.cycle);
+    	if(dcache_request.store && dcache_request.block.base_address != -1){
+        	dcache_request.block.dirty = true;
+    	}
     	dcache_request.block.base_address = dcache_request.base_address;
-    	dcache_request.block.dirty = dcache_request.store;
     	dcache_request.block.no_of_reads = 0;
 		busy = false;
 		dcache_request = null;
@@ -60,12 +62,17 @@ public class DCacheManager {
 
         block = set.get_empty_block(base_address);
         if (block != null){
-            total_latency += DCacheManager.latency;
+        	total_latency += DCacheManager.latency;
         }else{
             block = set.get_lru_block();
-            total_latency += DCacheManager.latency;
-//            total_latency += DCacheManager.latency; // latency for eviction
-            // TODO - if dirty, save block to memory before eviction
+            if(store){
+            	// write to memory only if there is an eviction, otherwise write to cache (no latency)
+            	if(block.dirty){
+            		total_latency += DCacheManager.latency; // latency for eviction
+            	}
+            }else{
+                total_latency += DCacheManager.latency;
+            }
         }
         if (block == null) throw new Exception("DCache cannot find a null block");
 
@@ -87,10 +94,11 @@ public class DCacheManager {
 		if(busy){
 			dcache_request.remaining_latency--;
 			CacheManager.print("run: " + dcache_request.remaining_latency + " inst: " + dcache_request.address + " , cycle: " + MIPS.cycle);
-			if(dcache_request.remaining_latency == 0){
+			if(dcache_request.remaining_latency <= 0){
 				write_block();
 			}
 		}
+
 	}
 
 	static void print_state(){

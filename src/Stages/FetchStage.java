@@ -12,16 +12,18 @@ import Managers.*;
 public class FetchStage {
 	private static int id = 0;
 	public static ArrayList<Integer> id_queue = new ArrayList<Integer>();
+	private static int unused_gid = -1;
 
 	public static void execute() {
 		if(canFetch() && id != -1){
 			Instruction inst = MIPS.instructions.get(id);
 			if(inst == null) throw new Error("Invalid instruction index: " + id);
 
-			if(CacheManager.is_available_in_icache(id)){
-//				System.out.println("Fetch- " + id + " - " + inst.toString());
+			int gid = (unused_gid == -1) ? OutputManager.add() : unused_gid;
 
-				int gid = OutputManager.add();
+			if(CacheManager.is_available_in_icache(gid)){
+//				System.out.println("Fetch- " + id + " - " + inst.toString());
+				unused_gid = -1;
 				FetchUnit.i.execute(inst, gid);
 
 				OutputManager.write(gid, 0, id);
@@ -35,6 +37,8 @@ public class FetchStage {
 				}else{
 					id = id+1;
 				}
+			}else{
+				unused_gid = gid;
 			}
 		}else{
 			if(id_queue.size() != 0) id = id_queue.remove(0);
