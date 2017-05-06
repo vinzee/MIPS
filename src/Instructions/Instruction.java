@@ -17,6 +17,7 @@ public abstract class Instruction {
 	public abstract MemoryOperand getMemoryOperand() throws Exception;
 	public abstract ImmediateOperand getImmediateOperand() throws Exception;
 	public String label;
+	public String i;
 
 	@Override
 	public String toString() {

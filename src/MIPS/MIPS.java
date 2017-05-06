@@ -18,8 +18,9 @@ public class MIPS {
 	public static boolean jump = false;
 	public static int post_halt_count = 0;
 	public static int cycle = 1;
-	public static final int MAX_CYCLES = 200;
+	public static final int MAX_CYCLES = 250;
 	public static final boolean CACHING_ENABLED = true;
+	public static final boolean LOGGING_ENABLED = true;
 
 	public static void main(String[] args) throws Exception {
 		InstructionParser.parse(args[0]);
@@ -41,7 +42,7 @@ public class MIPS {
 			IssueStage.execute();
 			FetchStage.execute();
 
-			OutputManager.printResults();
+			if(LOGGING_ENABLED) OutputManager.printResults();
 
 			if(stop_machine()) break;
 

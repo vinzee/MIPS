@@ -11,7 +11,7 @@ import MIPS.MIPS;
 import Managers.MemoryManager;
 
 public class CacheManager {
-	public static final boolean logging = true;
+	public static final boolean logging = !true;
 	public static final int LATENCY_PER_WORD = 3;
 	public static int icache_misses = 0;
 	public static int icache_hits = 0;

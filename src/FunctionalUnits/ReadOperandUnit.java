@@ -15,7 +15,7 @@ public class ReadOperandUnit extends FunctionalUnit {
 		if((inst instanceof BEQ)){
 			if(((BEQ)inst).isConditionSatisfied()){
 //				FetchStage.setId(-1); // skip current fetch
-				FetchStage.setNextId(MIPS.label_map.get(((BNE) inst).label)); // set next fetch
+				FetchStage.setNextId(MIPS.label_map.get(((BEQ) inst).label.toUpperCase())); // set next fetch
 				IssueStage.gid_queue.clear();
 			}else{
 				IssueStage.gid_queue.add(0, -1);

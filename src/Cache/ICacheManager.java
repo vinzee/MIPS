@@ -61,7 +61,7 @@ public class ICacheManager {
 
 		block_address = block_address - offset;
 
-		for(int i=0;i<4;i++){
+		for(int i=0;i<block_size;i++){
 			i_cache[index][i] = tag;
 		}
 

@@ -21,7 +21,7 @@ public class ConfigParser {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	private static void parseLine(String line) throws Exception {
 		String[] l = line.split(":");
 		String[] m = l[1].split(",");
@@ -49,10 +49,14 @@ public class ConfigParser {
 			case "i-cache":
 				ICacheManager.no_of_blocks = Integer.parseInt(m[0].trim());
 				ICacheManager.block_size = Integer.parseInt(m[1].trim());
+
+				if(ICacheManager.no_of_blocks <= 0) throw new Error("no_of_blocks can't be less than or equal to zero");
+				if(ICacheManager.block_size <= 0) throw new Error("block_size can't be less than or equal to zero");
+
 				break;
 			default:
 				throw new Exception("Unhandled config type - " + l[0]);
 		}
-		
+
 	}
 }

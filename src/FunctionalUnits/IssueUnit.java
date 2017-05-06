@@ -16,7 +16,7 @@ public class IssueUnit extends FunctionalUnit {
 			MIPS.halt_machine();
 		}else if(inst instanceof J){
 			FetchStage.setId(-1); // skip current fetch
-			FetchStage.setNextId(MIPS.label_map.get(((J) inst).label)); // set next fetch
+			FetchStage.setNextId(MIPS.label_map.get(((J) inst).label.toUpperCase())); // set next fetch
 		}else{
 			ReadOperandsStage.gid_queue.add(gid);
 			ExecutionUnit.allocate_unit(inst, id, gid);
