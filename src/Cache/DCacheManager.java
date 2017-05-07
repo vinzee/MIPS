@@ -1,6 +1,10 @@
 package Cache;
 
+import Instructions.Instruction;
+import Instructions.SD;
+import Instructions.SW;
 import MIPS.MIPS;
+import Managers.OutputManager;
 
 //I-Cache and D-Cache are both connected to main memory using a shared bus
 
@@ -49,11 +53,19 @@ public class DCacheManager {
     	dcache_request.block.base_address = dcache_request.base_address;
     	dcache_request.block.no_of_reads = 0;
 		busy = false;
+
+//		int address = dcache_request.address;
+//		int gid = dcache_request.gid;
+//		int id = OutputManager.read(gid, 0);
+//		Instruction inst = MIPS.instructions.get(id);
 		dcache_request = null;
+//		boolean is_store = (inst instanceof SD) || (inst instanceof SW);
+//		CacheManager._is_available_in_d_cache(address, gid, inst, is_store);
+
 		print_state();
     }
 
-    public static int process_write(int address, boolean store) throws Exception {
+    public static int process_write(int gid, int address, boolean store) throws Exception {
 		int set_id = get_set_id(address);
 		DCacheSet set = d_cache_sets[set_id];
 		int base_address = get_base_address(address);
@@ -65,18 +77,18 @@ public class DCacheManager {
         	total_latency += DCacheManager.latency;
         }else{
             block = set.get_lru_block();
-            if(store){
+//            if(store && !block.dirty){
             	// write to memory only if there is an eviction, otherwise write to cache (no latency)
-            	if(block.dirty){
-            		total_latency += DCacheManager.latency; // latency for eviction
-            	}
-            }else{
+//            	System.out.println("block: " + block);
+//            		total_latency += DCacheManager.latency; // latency for eviction
+//            }else{
                 total_latency += DCacheManager.latency;
-            }
+//            }
         }
         if (block == null) throw new Exception("DCache cannot find a null block");
 
-        dcache_request = new DCacheRequest(address, base_address, set, block, store, total_latency);
+		CacheManager.print("start write: " + address + " , base_address: " + base_address + " , dirty:" + block.dirty + " , store:" + store + " , cycle:" + MIPS.cycle);
+        dcache_request = new DCacheRequest(gid, address, base_address, set, block, store, total_latency);
         busy = true;
 
         return total_latency;
@@ -119,13 +131,13 @@ public class DCacheManager {
 	}
 
 	private static void debug() throws Exception {
-		System.out.println(is_present(266));
-		System.out.println(process_write(266, true));
-		System.out.println(is_present(266));
+//		System.out.println(is_present(266));
+//		System.out.println(process_write(266, true));
+//		System.out.println(is_present(266));
 //		print_state();
 //		write_block();
 //		print_state();
-		System.out.println(is_present(266));
+//		System.out.println(is_present(266));
 	}
 
 }

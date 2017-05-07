@@ -57,7 +57,6 @@ public class InstructionParser {
 		MemoryOperand memory_operand = null;
 		RegisterOperand register_operand1 = null, register_operand2 = null, register_operand3 = null;
 
-
 		try{
 			switch(opcode){
 			case "LW": // Load Word

@@ -7,9 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import Instructions.Instruction;
-import Instructions.LW;
-import Instructions.SW;
+import Instructions.*;
 import MIPS.MIPS;
 
 public class ExecutionUnit {
@@ -104,7 +102,14 @@ public class ExecutionUnit {
 		unit.setBusy(true);
 
 		int latency = unit.latency;
-		if(inst instanceof LW || inst instanceof SW){ latency = 1; }
+
+		if(!MIPS.CACHING_ENABLED){
+			if(inst instanceof LW || inst instanceof SW){
+				latency = 1;
+			}else if(inst instanceof LD || inst instanceof SD){
+				latency = 2;
+			}
+		}
 
 		FunctionalUnitData fud = new FunctionalUnitData(id, gid, unit, latency);
 		busy_units.put(gid, fud);

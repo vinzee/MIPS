@@ -1,17 +1,26 @@
 all: default
 
-default:
+compile:
+	$(MAKE) -j clean
 	javac MIPS/MIPS.java
+
+clean:
+	$(RM) *.class
+	$(RM) */*.class
+	$(RM) */*/*.class
+
+default:
+	$(MAKE) -j compile
 	java MIPS/MIPS inst.txt data.txt config.txt result.txt
 
 1:
-	javac MIPS/MIPS.java
+	$(MAKE) -j compile
 	java MIPS/MIPS inst1.txt data.txt config.txt result.txt
 
 2:
-	javac MIPS/MIPS.java
+	$(MAKE) -j compile
 	java MIPS/MIPS inst2.txt data.txt config.txt result.txt
 
 3:
-	javac MIPS/MIPS.java
+	$(MAKE) -j compile
 	java MIPS/MIPS inst3.txt data.txt config.txt result.txt
