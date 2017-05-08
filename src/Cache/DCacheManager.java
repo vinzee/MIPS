@@ -77,13 +77,13 @@ public class DCacheManager {
         	total_latency += DCacheManager.latency;
         }else{
             block = set.get_lru_block();
-//            if(store && !block.dirty){
+            if(store && block.dirty){
             	// write to memory only if there is an eviction, otherwise write to cache (no latency)
 //            	System.out.println("block: " + block);
-//            		total_latency += DCacheManager.latency; // latency for eviction
-//            }else{
-                total_latency += DCacheManager.latency;
-//            }
+            		total_latency += DCacheManager.latency; // latency for eviction
+            }
+//
+            total_latency += DCacheManager.latency;
         }
         if (block == null) throw new Exception("DCache cannot find a null block");
 
