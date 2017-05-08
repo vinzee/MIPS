@@ -59,7 +59,9 @@ public class OutputManager {
 	}
 
 	public static int add() {
-		output_table.add(new int[10]);
 		return ++last_gid;
+	}
+	public static void add_row() {
+		output_table.add(new int[10]);
 	}
 }

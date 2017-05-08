@@ -12,8 +12,9 @@ import Managers.*;
 public class FetchStage {
 	private static int id = 0;
 	public static ArrayList<Integer> id_queue = new ArrayList<Integer>();
-	private static int unused_gid = -1;
+	public static int unused_gid = -1;
 	private static int prev_gid = -1;
+	public static int halts_processed = 0;
 
 	public static void execute() {
 		if(canFetch() && id != -1){
@@ -27,7 +28,7 @@ public class FetchStage {
 				unused_gid = -1;
 				FetchUnit.i.execute(inst, gid);
 
-
+				OutputManager.add_row();
 				OutputManager.write(gid, 0, id);
 				OutputManager.write(gid,1, MIPS.cycle);
 
@@ -45,7 +46,10 @@ public class FetchStage {
 			}
 		}else{
 			if(id_queue.size() != 0) id = id_queue.remove(0);
-			if(id != -1) CacheManager.is_available_in_icache(id, prev_gid+1);
+			MIPS.jump = false;
+			if(!MIPS.jump){
+				if(id != -1) CacheManager.is_available_in_icache(id, prev_gid+1);
+			}
 		}
 	}
 

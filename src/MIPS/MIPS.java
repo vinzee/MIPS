@@ -48,7 +48,6 @@ public class MIPS {
 
 			cycle++;
 		}
-
 		OutputManager.printFile();
 	}
 

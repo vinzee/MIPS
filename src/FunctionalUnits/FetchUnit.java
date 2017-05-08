@@ -2,6 +2,7 @@ package FunctionalUnits;
 
 import Instructions.HLT;
 import Instructions.Instruction;
+import Stages.FetchStage;
 import Stages.IssueStage;
 import MIPS.*;
 
@@ -13,6 +14,7 @@ public class FetchUnit extends FunctionalUnit {
 	}
 
 	public void execute(Instruction inst, int gid) {
+		if(inst instanceof HLT ) FetchStage.halts_processed += 1;
 		if(inst instanceof HLT && MIPS.jump){
 //			MIPS.jump = false;
 		}else if(!MIPS.halt){
