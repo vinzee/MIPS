@@ -18,11 +18,13 @@ public class CacheManager {
 	public static int icache_misses = 0;
 	public static int icache_hits = 0;
 	public static int icache_requests = 0;
-	public static int dcache_misses = 0;
-	public static int dcache_hits = 0;
-	public static int dcache_requests = 0;
-	public static HashSet<String> icache_processed_addresses = new HashSet<String>();
-	public static HashSet<String> dcache_processed_addresses = new HashSet<String>();
+	public static HashSet<Integer> icache_processed_addresses = new HashSet<Integer>();
+//	public static int dcache_misses = 0;
+//	public static int dcache_hits = 0;
+//	public static int dcache_requests = 0;
+
+	public static HashSet<Integer> dcache_miss_requests = new HashSet<Integer>();
+	public static HashSet<Integer> dcache_processed_addresses = new HashSet<Integer>();
 	public static HashSet<Integer> dcache_read_requests = new HashSet<Integer>();
 
 	public static void init() throws Exception {
@@ -59,31 +61,33 @@ public class CacheManager {
 	}
 
 	static boolean _is_available_in_d_cache(int address, int gid, Instruction inst, boolean is_store, boolean is_double, boolean first) throws Exception{
-			String key = Integer.toString(gid) + Integer.toString(address);
-			if(!dcache_processed_addresses.contains(key)) dcache_requests += 1;
+			int key = Integer.parseInt(Integer.toString(gid) + Integer.toString(address));
+//			if(!dcache_processed_addresses.contains(key)) dcache_requests += 1;
+			dcache_processed_addresses.add(key);
 
 			if(DCacheManager.is_present(address)){ // cache hit
 //				if(!dcache_processed_addresses.contains(key)) print("hit: " + address + "  inst: " + inst.toString() + " , cycle: " + MIPS.cycle);
 				if(!is_double || (first && dcache_read_requests.contains(address)) || (!first && dcache_read_requests.contains(address-1))){
-					if(!dcache_processed_addresses.contains(key)) dcache_hits += 1;
-					dcache_processed_addresses.add(key);
+//					if(dcache_processed_addresses.contains(key)) dcache_hits += 1;
 					dcache_read_requests.add(address);
 					return true;
 				}else{
 					dcache_read_requests.add(address);
+//					dcache_processed_addresses.add(key);
 					DCacheManager.process_read(address);
-					dcache_read_requests.add(address);
 					return false;
 				}
 			}else if(DCacheManager.busy){ // cache miss
+//				dcache_processed_addresses.add(key);
 				return false;
 			}else{
 				if(!dcache_processed_addresses.contains(key)) print("miss: " + address + "  inst: " + inst.toString() + " , store: " + is_store + " , cycle: " + MIPS.cycle);
 				if(!ICacheManager.busy){
 					DCacheManager.process_write(gid, address, is_store);
 				}
-				if(!dcache_processed_addresses.contains(key)) dcache_misses += 1;
-				dcache_processed_addresses.add(key);
+//				if(!dcache_processed_addresses.contains(key)) dcache_misses += 1;
+//				dcache_processed_addresses.add(key);
+				dcache_miss_requests.add(key);
 				return false;
 			}
 	}
@@ -96,7 +100,7 @@ public class CacheManager {
 		if(ICacheManager.busy){ // cache line not busy
 			return false;
 		}else{
-			String key = Integer.toString(gid);
+			int key = gid;
 			if(!icache_processed_addresses.contains(key)) icache_requests += 1;
 
 			if(ICacheManager.is_present(block_address)){ // cache hit

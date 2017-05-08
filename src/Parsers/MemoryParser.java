@@ -18,7 +18,7 @@ public class MemoryParser {
 				parseLine(line, count);
 				count += 1;
 			}
-			
+
 			MemoryManager.end_address = MemoryManager.start_address + count;
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
@@ -26,6 +26,8 @@ public class MemoryParser {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} catch (NumberFormatException e){
+			throw new Error("Invalid Memory values");
 		}
 	}
 

@@ -40,7 +40,7 @@ public class OutputManager {
 		  System.out.println(String.format(instructionOutputFormatString, i++, arr[0], MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N', arr[9]));
 		}
 		System.out.println("\nICache:: Requests: " + CacheManager.icache_requests + " , Hits: " + CacheManager.icache_hits + " , Misses: " + CacheManager.icache_misses);
-		System.out.println("DCache:: Requests: " + (CacheManager.dcache_misses+CacheManager.dcache_hits)  + " , Hits: " + CacheManager.dcache_hits + " , Misses: " + CacheManager.dcache_misses);
+		System.out.println("DCache:: Requests: " + (CacheManager.dcache_processed_addresses.size())  + " , Hits: " + (CacheManager.dcache_processed_addresses.size()-CacheManager.dcache_miss_requests.size()) + " , Misses: " + CacheManager.dcache_miss_requests.size());
 		System.out.println("--------------------------------------------------------------------------");
 	}
 
@@ -52,7 +52,8 @@ public class OutputManager {
 			file.println(String.format(instructionPrintFormatString, MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N')); // , arr[9] == 1 ? 'Y' : 'N'
 		}
 		file.println("\nICache:: Requests: " + CacheManager.icache_requests + " , Hits: " + CacheManager.icache_hits);
-		file.println("DCache:: Requests: " + (CacheManager.dcache_misses+CacheManager.dcache_hits) + " , Hits: " + CacheManager.dcache_hits);
+		file.println("DCache:: Requests: " + (CacheManager.dcache_processed_addresses.size())  + " , Hits: " + (CacheManager.dcache_processed_addresses.size()-CacheManager.dcache_miss_requests.size()));
+//		file.println("DCache:: Requests: " + (CacheManager.dcache_requests) + " , Hits: " + CacheManager.dcache_hits);
 
 		file.close();
 	}
