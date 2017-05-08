@@ -18,7 +18,7 @@ public class MIPS {
 	public static boolean jump = false;
 	public static int post_halt_count = 0;
 	public static int cycle = 1;
-	public static final int MAX_CYCLES = 250;
+	public static final int MAX_CYCLES = 1000;
 	public static final boolean CACHING_ENABLED = true;
 	public static final boolean LOGGING_ENABLED = true;
 

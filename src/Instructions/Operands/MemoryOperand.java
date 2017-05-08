@@ -9,18 +9,24 @@ public class MemoryOperand extends Operand {
 	public MemoryOperand(String str) throws Exception {
 		super();
 
-		if(str.contains("(")){
-			String offset = str.substring(0, str.indexOf("("));
-			this.offset_address = Integer.parseInt(offset);
-			String base = str.substring(str.indexOf("(") + 1, str.indexOf(")"));
+		try{
+			if(str.contains("(")){
+				String offset = str.substring(0, str.indexOf("("));
+				this.offset_address = Integer.parseInt(offset);
+				String base = str.substring(str.indexOf("(") + 1, str.indexOf(")"));
 
-			if(RegisterOperand.isValidRegister(base)){
-				this.base_register = new RegisterOperand(base);
+				if(RegisterOperand.isValidRegister(base)){
+					this.base_register = new RegisterOperand(base);
+				}else{
+					this.base_address = Integer.parseInt(base);
+				}
 			}else{
-				this.base_address = Integer.parseInt(base);
+				this.base_address = Integer.parseInt(str);
 			}
-		}else{
-			this.base_address = Integer.parseInt(str);
+		}catch(StringIndexOutOfBoundsException e){
+			throw new Error("Invalid Memory Operand: " + str);
+		}catch(NumberFormatException e){
+			throw new Error("Invalid Memory Operand: " + str);
 		}
 	}
 

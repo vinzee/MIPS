@@ -1,10 +1,6 @@
 package Cache;
 
-import Instructions.Instruction;
-import Instructions.SD;
-import Instructions.SW;
 import MIPS.MIPS;
-import Managers.OutputManager;
 
 //I-Cache and D-Cache are both connected to main memory using a shared bus
 
