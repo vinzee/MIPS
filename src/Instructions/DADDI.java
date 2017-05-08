@@ -9,7 +9,7 @@ public class DADDI extends Instruction{
 	RegisterOperand register_operand1;
 	RegisterOperand register_operand2;
 	ImmediateOperand immediate_operand;
-	
+
 	public DADDI(RegisterOperand register_operand1, RegisterOperand register_operand2, ImmediateOperand immediate_operand) {
 		super();
 		this.register_operand1 = register_operand1;
@@ -38,7 +38,7 @@ public class DADDI extends Instruction{
 	@Override
 	public void write() throws Exception {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -49,8 +49,7 @@ public class DADDI extends Instruction{
 
 	@Override
 	public ImmediateOperand getImmediateOperand() throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		return this.immediate_operand;
 	}
 
 }
