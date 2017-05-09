@@ -51,9 +51,10 @@ public class OutputManager {
 		for (int[] arr: output_table) {
 			file.println(String.format(instructionPrintFormatString, MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N')); // , arr[9] == 1 ? 'Y' : 'N'
 		}
-		file.println("\nICache:: Requests: " + CacheManager.icache_requests + " , Hits: " + CacheManager.icache_hits);
-		file.println("DCache:: Requests: " + (CacheManager.dcache_processed_addresses.size())  + " , Hits: " + (CacheManager.dcache_processed_addresses.size()-CacheManager.dcache_miss_requests.size()));
-//		file.println("DCache:: Requests: " + (CacheManager.dcache_requests) + " , Hits: " + CacheManager.dcache_hits);
+		file.println("\nTotal number of access requests for instruction cache: " + CacheManager.icache_requests);
+		file.println("Number of instruction cache hits: " + CacheManager.icache_hits);
+		file.println("Total number of access requests for data cache: " + (CacheManager.dcache_processed_addresses.size()));
+		file.println("Number of data cache hits: " + (CacheManager.dcache_processed_addresses.size()-CacheManager.dcache_miss_requests.size()));
 
 		file.close();
 	}
