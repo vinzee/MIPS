@@ -31,9 +31,9 @@ public abstract class Instruction {
 			if(this.getImmediateOperand() != null) s.append(", " + this.getImmediateOperand().toString());
 
 			if(this instanceof BEQ){
-				s.append(" " + ((BEQ) this).label);
+				s.append(", " + ((BEQ) this).label);
 			}else if(this instanceof BNE) {
-				s.append(" " + ((BNE) this).label);
+				s.append(", " + ((BNE) this).label);
 			}else if(this instanceof J) {
 				s.append(" " + ((J) this).label);
 			}

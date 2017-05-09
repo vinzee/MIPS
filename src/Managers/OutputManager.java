@@ -39,8 +39,13 @@ public class OutputManager {
 		for (int[] arr: output_table) {
 		  System.out.println(String.format(instructionOutputFormatString, i++, arr[0], MIPS.instructions.get(arr[0]), arr[1], arr[2], arr[3], arr[4], arr[5], arr[6] == 1 ? 'Y' : 'N', arr[7] == 1 ? 'Y' : 'N', arr[8] == 1 ? 'Y' : 'N', arr[9]));
 		}
-		System.out.println("\nICache:: Requests: " + CacheManager.icache_requests + " , Hits: " + CacheManager.icache_hits + " , Misses: " + CacheManager.icache_misses);
-		System.out.println("DCache:: Requests: " + (CacheManager.dcache_processed_addresses.size())  + " , Hits: " + (CacheManager.dcache_processed_addresses.size()-CacheManager.dcache_miss_requests.size()) + " , Misses: " + CacheManager.dcache_miss_requests.size());
+		System.out.println("\nTotal number of access requests for instruction cache: " + CacheManager.icache_requests);
+		System.out.println("Number of instruction cache hits: " + CacheManager.icache_hits);
+		System.out.println("Total number of access requests for data cache: " + (CacheManager.dcache_processed_addresses.size()));
+		System.out.println("Number of data cache hits: " + (CacheManager.dcache_processed_addresses.size()-CacheManager.dcache_miss_requests.size()));
+
+//		System.out.println("\nICache:: Requests: " + CacheManager.icache_requests + " , Hits: " + CacheManager.icache_hits + " , Misses: " + CacheManager.icache_misses);
+//		System.out.println("DCache:: Requests: " + (CacheManager.dcache_processed_addresses.size())  + " , Hits: " + (CacheManager.dcache_processed_addresses.size()-CacheManager.dcache_miss_requests.size()) + " , Misses: " + CacheManager.dcache_miss_requests.size());
 		System.out.println("--------------------------------------------------------------------------");
 	}
 
