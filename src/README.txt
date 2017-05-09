@@ -1,8 +1,14 @@
 ------------------------
-    Vineet Ahirkar
+MIPS Scoreboard Simulator (CMSC 611)
+
+- by Vineet Ahirkar
 ------------------------
 
-Run the project by the make command
+Running the project -
 
+1. From the command line
+ - use the make command to compile and run the command
+ - the parameters can be changed by editing the makefile in the project root
 
-ICache + DCache working (can be turned off by )
+2. From eclipse
+ - open the project in eclipse and hit run
