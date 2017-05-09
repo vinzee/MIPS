@@ -24,6 +24,8 @@ public class MIPS {
 	public static final boolean LOGGING_ENABLED = true;
 
 	public static void main(String[] args) throws Exception {
+		if(args.length < 4) throw new Error("Insufficient arguments !");
+
 		InstructionParser.parse(args[0]);
 		MemoryParser.parse(args[1]);
 		ConfigParser.parse(args[2]);

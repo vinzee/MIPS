@@ -11,4 +11,6 @@ Running the project -
  - the parameters can be changed by editing the makefile in the project root
 
 2. From eclipse
- - open the project in eclipse and hit run
+ - open the project in eclipse
+ - configure the parameters for the project
+ - hit run
