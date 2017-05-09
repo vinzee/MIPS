@@ -15,14 +15,14 @@ public class ReadOperandUnit extends FunctionalUnit {
 		if((inst instanceof BEQ || inst instanceof BNE)){
 			if( ((inst instanceof BEQ) && ((BEQ)inst).isConditionSatisfied()) ||
 				(((inst instanceof BNE) && ((BNE)inst).isConditionSatisfied())) ){
-				int jump_id = MIPS.label_map.get(((BNE) inst).label.toUpperCase());
+				String label = (inst instanceof BEQ) ? ((BEQ) inst).label : ((BNE) inst).label;
+				int jump_id = MIPS.label_map.get(label.toUpperCase());
 				if(FetchStage.halts_processed == 1){
 					FetchStage.setId(-1); // set next fetch
-					FetchStage.setNextId(jump_id); // set next fetch
 				}else{
-					FetchStage.setNextId(jump_id); // set next fetch
 					MIPS.jump = true;
 				}
+				FetchStage.setNextId(jump_id); // set next fetch
 				IssueStage.gid_queue.clear();
 //				FetchUnit.i.setBusy(false);
 				FetchStage.halts_processed = 0;
