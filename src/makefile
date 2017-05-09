@@ -28,3 +28,7 @@ default:
 4:
 	$(MAKE) -j compile
 	java MIPS/MIPS inst4.txt data.txt config.txt result.txt
+
+5:
+	$(MAKE) -j compile
+	java MIPS/MIPS inst5.txt data.txt config.txt result.txt

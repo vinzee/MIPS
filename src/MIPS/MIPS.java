@@ -15,6 +15,7 @@ public class MIPS {
 	public static HashMap<String, Integer> label_map = new HashMap<String, Integer>();
 
 	public static boolean halt = false;
+	public static boolean pre_jump = false;
 	public static boolean jump = false;
 	public static int post_halt_count = 0;
 	public static int cycle = 1;

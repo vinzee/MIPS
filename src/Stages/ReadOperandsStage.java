@@ -31,14 +31,10 @@ public class ReadOperandsStage {
 					ReadOperandUnit.i.execute(inst, gid);
 
 					OutputManager.write(gid, 3, MIPS.cycle);
-					// TODO - CHECK THIS - commented to process multiple instructions in RO stage
-					// break;
 				}else{
 					// Till BEQ / BNE is issued stall pipeline until the condition is resolved.
 					if(inst instanceof BEQ || inst instanceof BNE){
 						IssueStage.gid_queue.add(0, -1);
-						// TODO - CHECK THIS - commented to process multiple instructions in RO stage
-						// break;
 					}
 				}
 			}

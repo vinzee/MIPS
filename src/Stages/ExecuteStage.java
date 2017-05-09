@@ -30,7 +30,6 @@ public class ExecuteStage {
 //					System.out.println("Execute- " + gid + " - " + inst.toString());
 					ExecutionUnit.run_unit(gid);
 		        	OutputManager.write(gid, 9, MIPS.cycle);
-//					break;
 				}
 			}
 		}

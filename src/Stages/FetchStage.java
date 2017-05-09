@@ -14,7 +14,7 @@ public class FetchStage {
 	public static ArrayList<Integer> id_queue = new ArrayList<Integer>();
 	public static int unused_gid = -1;
 	private static int prev_gid = -1;
-	public static int halts_processed = 0;
+	public static int insts_processed_after_jump = 0;
 
 	public static void execute() {
 		if(canFetch() && id != -1){

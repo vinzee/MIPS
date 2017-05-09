@@ -14,7 +14,7 @@ public class FetchUnit extends FunctionalUnit {
 	}
 
 	public void execute(Instruction inst, int gid) {
-		if(inst instanceof HLT ) FetchStage.halts_processed += 1;
+		if(MIPS.pre_jump) FetchStage.insts_processed_after_jump += 1;
 		if(inst instanceof HLT && MIPS.jump){
 //			MIPS.jump = false;
 		}else if(!MIPS.halt){

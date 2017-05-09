@@ -49,14 +49,7 @@ public class DCacheManager {
     	dcache_request.block.base_address = dcache_request.base_address;
     	dcache_request.block.no_of_reads = 0;
 		busy = false;
-
-//		int address = dcache_request.address;
-//		int gid = dcache_request.gid;
-//		int id = OutputManager.read(gid, 0);
-//		Instruction inst = MIPS.instructions.get(id);
 		dcache_request = null;
-//		boolean is_store = (inst instanceof SD) || (inst instanceof SW);
-//		CacheManager._is_available_in_d_cache(address, gid, inst, is_store);
 
 		print_state();
     }
@@ -73,16 +66,12 @@ public class DCacheManager {
         	total_latency += DCacheManager.latency;
         }else{
             block = set.get_lru_block();
-            if(store && block.dirty){
-            	// write to memory only if there is an eviction, otherwise write to cache (no latency)
-//            	System.out.println("block: " + block);
-            		total_latency += DCacheManager.latency; // latency for eviction
+            if(block.dirty){ // write to memory only if there is an eviction, otherwise write to cache (no latency)
+        		total_latency += DCacheManager.latency; // latency for eviction
             }
 //
             total_latency += DCacheManager.latency;
         }
-        if (block == null) throw new Exception("DCache cannot find a null block");
-
 		CacheManager.print("start write: " + address + " , base_address: " + base_address + " , dirty:" + block.dirty + " , store:" + store + " , cycle:" + MIPS.cycle);
         dcache_request = new DCacheRequest(gid, address, base_address, set, block, store, total_latency);
         busy = true;
