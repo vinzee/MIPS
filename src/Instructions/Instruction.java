@@ -30,7 +30,15 @@ public abstract class Instruction {
 			if(this.getMemoryOperand() != null) s.append(", " + this.getMemoryOperand().toString());
 			if(this.getImmediateOperand() != null) s.append(", " + this.getImmediateOperand().toString());
 
-			return s.toString();
+			if(this instanceof BEQ){
+				s.append(" " + ((BEQ) this).label);
+			}else if(this instanceof BNE) {
+				s.append(" " + ((BNE) this).label);
+			}else if(this instanceof J) {
+				s.append(" " + ((J) this).label);
+			}
+
+			return s.toString().toUpperCase();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
