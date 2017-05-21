@@ -15,6 +15,10 @@ public class RegisterOperand extends Operand {
 		this.index = getIndex(register_name);
 	}
 
+	public double getBufferedValue() throws Exception {
+		return RegisterManager.read_buffered_value(this);
+	}
+
 	public double getValue() throws Exception {
 		return RegisterManager.read(this);
 	}

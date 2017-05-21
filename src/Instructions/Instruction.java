@@ -3,6 +3,7 @@ package Instructions;
 import java.util.ArrayList;
 
 import Instructions.Operands.*;
+import Managers.RegisterManager;
 
 // Data Transfers - LW, SW, L.D, S.D
 // Arithmetic/ logical - DADD, DADDI, DSUB, DSUBI, AND, ANDI, OR, ORI, LI, LUI, ADD.D, MUL.D, DIV.D, SUB.D
@@ -12,6 +13,7 @@ import Instructions.Operands.*;
 public abstract class Instruction {
 	public abstract void execute() throws Exception;
 	public abstract void write() throws Exception;
+
 	public abstract RegisterOperand getDestinationRegister() throws Exception;
 	public abstract ArrayList<RegisterOperand> getSourceRegisters() throws Exception;
 	public abstract MemoryOperand getMemoryOperand() throws Exception;
@@ -67,4 +69,10 @@ public abstract class Instruction {
 		}
 		return false;
 	};
+
+	public void readSourceRegisterToBuffer() throws Exception {
+		for (RegisterOperand source_operand: this.getSourceRegisters()) {
+			RegisterManager.read_to_buffer(source_operand);
+		}
+	}
 }

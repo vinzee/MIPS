@@ -96,7 +96,7 @@ public class CacheManager {
 				return true;
 			}else{ // cache miss
 //				print("ICache miss: " + block_address);
-				if(!ICacheManager.busy && !DCacheManager.busy){
+				if(!ICacheManager.busy){ // && !DCacheManager.busy
 					ICacheManager.process_write(block_address);
 				}
 				if(!icache_processed_addresses.contains(key)) icache_misses += 1;
@@ -106,7 +106,7 @@ public class CacheManager {
 	}
 
 	public static void run() throws Exception{
-		if(ICacheManager.busy){
+		if(ICacheManager.busy && (!DCacheManager.busy || (DCacheManager.busy && DCacheManager.dcache_request.remaining_latency > 11) )){
 			ICacheManager.run();
 		}else if(DCacheManager.busy){
 			DCacheManager.run();

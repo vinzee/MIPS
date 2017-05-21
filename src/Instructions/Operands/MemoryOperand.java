@@ -32,7 +32,7 @@ public class MemoryOperand extends Operand {
 
 	public int final_address() throws Exception {
 		if(this.base_register != null){
-			return (int)this.base_register.getValue() + this.offset_address;
+			return (int)this.base_register.getBufferedValue() + this.offset_address;
 		}else{
 			return this.base_address + this.offset_address;
 		}

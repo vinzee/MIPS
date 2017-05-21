@@ -18,7 +18,7 @@ public class DCacheManager {
 	static int no_of_blocks = 2; // no_of_blocks within a set
 
 	private static DCacheSet[] d_cache_sets = new DCacheSet[no_of_sets];
-	private static DCacheRequest dcache_request;
+	public static DCacheRequest dcache_request;
 	public static boolean busy;
 
 	private static int set_id_length = (int) (Math.log(no_of_sets) / Math.log(2));
@@ -90,7 +90,7 @@ public class DCacheManager {
 	public static void run() throws Exception{
 		if(busy){
 			dcache_request.remaining_latency--;
-//			CacheManager.print("run: " + dcache_request.remaining_latency + " inst: " + dcache_request.address + " , cycle: " + MIPS.cycle);
+			CacheManager.print("run: " + dcache_request.remaining_latency + " inst: " + dcache_request.address + " , cycle: " + MIPS.cycle);
 			if(dcache_request.remaining_latency <= 0){
 				write_block();
 			}

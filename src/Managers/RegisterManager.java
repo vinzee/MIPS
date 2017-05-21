@@ -10,6 +10,8 @@ import Instructions.Operands.RegisterOperand;
 public class RegisterManager {
 	static HashMap<RegisterOperand, Double> register_cache = new HashMap<RegisterOperand, Double>();
 
+	static double[] integer_register_buffers = new double[32];
+
 	static double[] integer_registers = new double[32];
 	static double[] floating_point_registers = new double[32];
 
@@ -28,6 +30,20 @@ public class RegisterManager {
 			integer_register_writing[register_operand.index-1] = value;
 		else
 			floating_point_register_writing[register_operand.index-1] = value;
+	}
+
+	public static void read_to_buffer(RegisterOperand register_operand) throws Exception {
+		if(!register_operand.floating_point){
+			integer_register_buffers[register_operand.index-1] = integer_registers[register_operand.index-1];
+		}
+	}
+
+	public static double read_buffered_value(RegisterOperand register_operand) throws Exception {
+		if(register_operand.floating_point){
+			throw new Error("floating_point operands have no buffered value !");
+		}else{
+			return integer_register_buffers[register_operand.index-1];
+		}
 	}
 
 	public static double read(RegisterOperand register_operand) throws Exception {

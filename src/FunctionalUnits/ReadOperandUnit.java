@@ -32,5 +32,7 @@ public class ReadOperandUnit extends FunctionalUnit {
 		}else{
 			ExecuteStage.gid_queue.add(gid);
 		}
+
+		inst.readSourceRegisterToBuffer();
 	}
 }
